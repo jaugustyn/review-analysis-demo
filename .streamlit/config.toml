@@ -1,13 +1,24 @@
-# Fonts and layout as in the other demo; orange accent from the product vision deck.
+# Teal accent with a dark teal sidebar; fonts as in the other demo. Chart colors: src/formatting.py.
 [theme]
 base = "light"
-primaryColor = "#A84B0C"
-backgroundColor = "#F7F6F2"
-secondaryBackgroundColor = "#EFEDE6"
-textColor = "#172033"
-borderColor = "#DDD9CE"
+primaryColor = "#0F766E"
+backgroundColor = "#F7FAF9"
+secondaryBackgroundColor = "#E9F1EF"
+textColor = "#13292D"
+borderColor = "#D3E0DC"
+linkColor = "#0F766E"
+# Info boxes in teal instead of the default blue
+blueBackgroundColor = "#E1F0EC"
+blueTextColor = "#0E5F58"
 font = "IBM Plex Sans:https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap, sans-serif"
 headingFont = "Space Grotesk:https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&display=swap, sans-serif"
+
+[theme.sidebar]
+backgroundColor = "#0F3B3C"
+secondaryBackgroundColor = "#1B5153"
+textColor = "#E6F2F0"
+borderColor = "#2B6466"
+primaryColor = "#5FD3B0"
 
 [server]
 port = 8502  # 8501 is used by the fraud detection demo, so both can run side by side

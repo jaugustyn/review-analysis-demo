@@ -18,8 +18,8 @@ from src.config import (
 )
 from src.data import review_text
 from src.formatting import (
-    BLUE, GRAY, INK, METHOD_LABELS, ORANGE, SENTIMENT_LABELS, SOURCE_LABELS, fmt_int, fmt_num, fmt_pct, fmt_pln,
-    fmt_seconds,
+    INK, METHOD_LABELS, NEGATIVE, NEUTRAL, POSITIVE, SENTIMENT_LABELS, SOURCE_LABELS, TEAL, fmt_int, fmt_num,
+    fmt_pct, fmt_pln, fmt_seconds,
 )
 from src.topics import TOPIC_LABELS
 
@@ -46,13 +46,15 @@ def quality_chart(methods: dict) -> None:
     fig, ax = plt.subplots(figsize=(9, 4.5), dpi=150)
     names = [METHOD_LABELS[m] for m in methods][::-1]
     y = np.arange(len(names))
-    for i, (cls, color) in enumerate(zip(SENTIMENT_LABELS, [ORANGE, GRAY, BLUE])):
+    for i, (cls, color) in enumerate(zip(SENTIMENT_LABELS, [NEGATIVE, NEUTRAL, POSITIVE])):
         values = [methods[m]["f1"][cls] for m in methods][::-1]
-        ax.barh(y + (1 - i) * 0.25, values, height=0.23, color=color, label=SENTIMENT_LABELS[cls])
+        bars = ax.barh(y + (1 - i) * 0.25, values, height=0.23, color=color, label=SENTIMENT_LABELS[cls])
+        ax.bar_label(bars, labels=[fmt_num(v) for v in values], padding=3, fontsize=8, color=INK)
     ax.set_yticks(y, names)
-    ax.set_xlim(0, 1)
+    ax.set_xlim(0, 1.05)
+    ax.xaxis.set_major_formatter(lambda v, _: fmt_num(v, 1))
     ax.set_xlabel("F1 (1 = bez błędów)", color=INK)
-    ax.legend(frameon=False, loc="lower right", reverse=True)
+    ax.legend(frameon=False, loc="lower center", bbox_to_anchor=(0.5, 1), ncol=3)
     style(ax)
     ax.grid(axis="y", visible=False)
     fig.tight_layout()
@@ -65,14 +67,16 @@ def speed_chart(methods: dict) -> None:
     fig, ax = plt.subplots(figsize=(9, 4.5), dpi=150)
     for method, values in methods.items():
         seconds = max(values["seconds_per_1000"], 0.01)
-        ax.scatter([seconds], [values["f1_macro"]], s=70, color=BLUE if method == "llm" else INK, zorder=3)
+        ax.scatter([seconds], [values["f1_macro"]], s=70, color=TEAL if method == "llm" else INK, zorder=3)
         ax.annotate(METHOD_LABELS[method], (seconds, values["f1_macro"]), xytext=(8, -4),
                     textcoords="offset points", color=INK)
     ax.set_xscale("log")
+    ax.set_xlim(right=max(v["seconds_per_1000"] for v in methods.values()) * 6)  # room for the last label
     ax.set_xlabel("Czas analizy 1000 opinii (s, skala logarytmiczna)", color=INK)
     ax.set_ylabel("F1 makro", color=INK)
     ax.set_ylim(0, 1)
     ax.xaxis.set_major_formatter(lambda v, _: fmt_num(v, 0 if v >= 1 else 2))
+    ax.yaxis.set_major_formatter(lambda v, _: fmt_num(v, 1))
     style(ax)
     fig.tight_layout()
     fig.savefig(RESULTS_DIR / "quality_vs_time.png")
@@ -95,7 +99,7 @@ def topic_check(evaluated: pd.DataFrame) -> str:
             "poprawne_slownik": "",
             "poprawne_llm": "",
         }).to_csv(TOPIC_SAMPLE, index=False, encoding="utf-8-sig")
-    checked = pd.read_csv(TOPIC_SAMPLE, encoding="utf-8-sig").fillna("")
+    checked = pd.read_csv(TOPIC_SAMPLE, encoding="utf-8-sig", dtype=str).fillna("")
     answers = {source: checked[f"poprawne_{source}"].str.strip().str.lower() for source in ("slownik", "llm")}
     if not all(answers[source].isin(["tak", "nie"]).all() for source in answers):
         return (f"Ręczna ocena jeszcze niewypełniona: w `{TOPIC_SAMPLE.name}` dla każdej z {SAMPLE_SIZE} opinii wpisz "
@@ -202,7 +206,6 @@ Cytaty LLM dosłownie obecne w opinii: {fmt_pct(metrics['llm_quotes_verbatim'])}
 - Ocena w gwiazdkach nie zawsze zgadza się z treścią opinii, więc część „błędów” metod to w rzeczywistości
   niespójność klienta.
 - Gotowy model z Hugging Face był uczony na opiniach o produktach – nie wiemy, czy nie było wśród nich opinii z Amazona.
-- Model LLM może jeszcze zostać zmieniony; wtedy trzeba ponownie uruchomić `analyze.py` i `report.py`.
 """
     (RESULTS_DIR / "summary.md").write_text(report, encoding="utf-8")
     print(report)

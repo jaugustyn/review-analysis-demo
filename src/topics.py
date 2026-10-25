@@ -9,13 +9,21 @@ import re
 
 import pandas as pd
 
-TOPIC_LABELS = {"quality": "Jakość", "price": "Cena", "delivery": "Dostawa", "service": "Obsługa"}
+TOPIC_LABELS = {
+    "quality": "Jakość", "fit": "Dopasowanie", "price": "Cena", "delivery": "Dostawa", "service": "Obsługa",
+}
 
 TOPIC_KEYWORDS = {
     "quality": [
         "quality", "durable", "sturdy", "flimsy", "well made", "well-made", "poorly made", "cheaply made",
         "broke", "broken", "defective", "stopped working", "quit working", "died", "leak", "leaks", "leaked",
-        "leaking", "malfunction", "falling apart", "fell apart", "lasted",
+        "leaking", "malfunction", "falling apart", "fell apart", "lasted", "durability", "defect", "failed",
+        "cracked", "rust", "rusted", "melted", "junk", "garbage",
+    ],
+    "fit": [
+        "fit", "fits", "fitted", "compatible", "compatibility", "incompatible", "too small", "too big",
+        "too large", "too short", "wrong size", "right size", "perfect size", "exact replacement", "exact match",
+        "direct replacement", "model number",
     ],
     "price": [
         "price", "priced", "expensive", "inexpensive", "affordable", "cheaper", "worth", "value", "money",

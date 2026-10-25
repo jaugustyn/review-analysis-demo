@@ -15,6 +15,7 @@ if not METRICS_PATH.exists():
 
 page = st.navigation([
     st.Page("views/product.py", title="Produkt", icon=":material/inventory_2:", default=True),
+    st.Page("views/live.py", title="Analiza na żywo", icon=":material/bolt:"),
     st.Page("views/comparison.py", title="Porównanie metod", icon=":material/compare_arrows:"),
     st.Page("views/reviews.py", title="Opinie", icon=":material/chat:"),
 ])

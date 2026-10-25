@@ -1,19 +1,24 @@
 # Głos Klienta – analiza opinii klientów: od słownika do LLM
 
-Demo narzędzia, które z opinii o produkcie wyciąga najczęstsze zalety i skargi według tematów (jakość, cena,
-dostawa, obsługa), z cytatami i krótkim raportem dla menedżera. Pokazuje też, jak cztery metody – od prostego
+Demo narzędzia, które z opinii o produkcie wyciąga najczęstsze zalety i skargi według tematów (jakość,
+dopasowanie, cena, dostawa, obsługa), z cytatami i krótkim raportem dla menedżera. Pokazuje też, jak cztery metody – od prostego
 słownika po model językowy (LLM) – radzą sobie z tymi samymi opiniami i ile kosztuje każda z nich.
 
 > „Z setek opinii – jedna jasna odpowiedź.”
 
 ## Ekrany
 
-- **Produkt** – zalety i skargi wybranego produktu według tematów, z cytatami, do wyboru ze słownika albo z LLM,
-  oraz raport dla menedżera. Przy lokalnym uruchomieniu można też wkleić link do produktu AGD z Amazona
-  i przeanalizować go na żywo.
-- **Porównanie metod** – trafność, F1, czas i koszt analizy 1000 opinii dla czterech metod oraz szacunek kosztu
+- **Produkt** – zalety i skargi jednego z 10 produktów demo (marki znane w Polsce: Samsung, Bosch, LG, Haier,
+  De'Longhi, Krups, Melitta i inne) według tematów, z cytatami, do wyboru ze słownika albo z LLM, oraz raport
+  dla menedżera.
+- **Analiza na żywo** – wklejasz link do produktu AGD z Amazona, a aplikacja liczy to samo dla jego najnowszych
+  opinii (tylko przy lokalnym uruchomieniu).
+- **Porównanie metod** – trafność, F1 i czas analizy 1000 opinii dla czterech metod oraz szacunek kosztu
   LLM w płatnych API.
-- **Opinie** – opinie testowe z werdyktem każdej metody; widać, gdzie która się myli.
+- **Opinie** – opinie testowe z werdyktem każdej metody i produktem, którego dotyczą; widać, gdzie która metoda
+  się myli.
+
+Jak korzystać z aplikacji, krok po kroku: [docs/tutorial.md](docs/tutorial.md).
 
 Podsumowanie wyników (tabele i wykresy): [results/summary.md](results/summary.md).
 
@@ -38,20 +43,23 @@ Analiza na żywo nie działa w Dockerze.
 
 ## Uruchomienie lokalne (z analizą na żywo)
 
-Wymagania: Python 3.12, [uv](https://docs.astral.sh/uv/), karta NVIDIA ze sterownikiem dla CUDA 13
-i [Ollama](https://ollama.com) z modelem z `src/config.py` (`LLM_MODEL`).
+Wymagania: Python 3.12, [uv](https://docs.astral.sh/uv/), karta NVIDIA z co najmniej 12 GB pamięci
+i sterownikiem dla CUDA 13 oraz [Ollama](https://ollama.com) w wersji 0.40 lub nowszej.
 
 ```bash
 uv sync
-ollama pull qwen3.5:9b               # model z LLM_MODEL w src/config.py
+ollama pull gemma4:12b               # model z LLM_MODEL w src/config.py
 uv run python prepare_data.py        # pobiera dane (ok. 1,2 GB) i wybiera opinie
-uv run python analyze.py             # liczy 4 metody od nowa (ok. godziny)
+uv run python analyze.py             # liczy 4 metody od nowa (ok. pół godziny)
 uv run streamlit run app.py          # aplikacja
 uv run python report.py              # opcjonalnie: odświeża results/
 ```
 
 Sama aplikacja działa od razu po `uv sync`, bo wyniki są w repozytorium. `prepare_data.py` i `analyze.py`
 są potrzebne do analizy na żywo i do przeliczenia wyników.
+
+Ollama domyślnie odpowiada na jedno zapytanie naraz. Aplikacja wysyła cztery, więc z ustawioną zmienną
+środowiskową `OLLAMA_NUM_PARALLEL=4` (przed startem Ollamy) analiza LLM jest ok. 1,6 raza szybsza.
 
 Windows ze Smart App Control: ustaw `UV_PYTHON_PREFERENCE=only-system`, żeby uv używał Pythona z python.org
 zamiast pobierać własny (system blokuje jego niepodpisane pliki).
@@ -75,12 +83,13 @@ zamiast pobierać własny (system blokuje jego niepodpisane pliki).
 
 ```
 app.py              aplikacja Streamlit: nawigacja
-views/              trzy ekrany aplikacji
+views/              cztery ekrany aplikacji
 prepare_data.py     pobranie danych, produkty demo, opinie testowe i do nauki
 analyze.py          cztery metody na opiniach testowych i produktach demo → precomputed/
 report.py           podsumowanie wyników: tabele i wykresy (results/)
 precomputed/        policzone wyniki, które czyta aplikacja
 results/            summary.md, wykresy i próbka do ręcznej oceny tematów
+docs/               tutorial ze zrzutami ekranu
 src/
   config.py         ścieżki, produkty demo, modele, ceny API
   data.py           dane: konwersja, podział, wyszukiwanie produktu po linku
@@ -90,5 +99,6 @@ src/
   pipeline.py       cztery metody na zbiorze opinii
   live.py           analiza na żywo
   app_data.py       wczytywanie wyników w aplikacji
+  product_view.py   widok produktu wspólny dla ekranów Produkt i Analiza na żywo
   formatting.py     polskie etykiety, formatowanie liczb, kolory
 ```

@@ -1,63 +1,63 @@
 {
   "date": "2026-10-25",
   "gpu": "NVIDIA GeForce RTX 5070",
-  "llm_model": "qwen3.5:9b",
+  "llm_model": "gemma4:12b",
   "llm_workers": 4,
   "transformer_model": "nlptown/bert-base-multilingual-uncased-sentiment",
   "tfidf_train_reviews": 100000,
-  "tfidf_train_seconds": 7.843597800005227,
+  "tfidf_train_seconds": 8.522001100005582,
   "eval_reviews": 1000,
   "class_shares": {
-    "positive": 0.811,
-    "negative": 0.154,
-    "neutral": 0.035
+    "positive": 0.803,
+    "negative": 0.15,
+    "neutral": 0.047
   },
   "methods": {
     "vader": {
-      "accuracy": 0.805,
-      "f1_macro": 0.5276638730948481,
+      "accuracy": 0.8,
+      "f1_macro": 0.5169845816985509,
       "f1": {
-        "negative": 0.6408450704225352,
-        "neutral": 0.047244094488188976,
-        "positive": 0.89490245437382
+        "negative": 0.6105263157894737,
+        "neutral": 0.049586776859504134,
+        "positive": 0.890840652446675
       },
-      "seconds_per_1000": 0.09559649997390807
+      "seconds_per_1000": 0.1137690000468865
     },
     "tfidf": {
-      "accuracy": 0.901,
-      "f1_macro": 0.6964355277155674,
+      "accuracy": 0.881,
+      "f1_macro": 0.6958737173722825,
       "f1": {
-        "negative": 0.8260869565217391,
-        "neutral": 0.3076923076923077,
-        "positive": 0.9555273189326556
+        "negative": 0.8025078369905956,
+        "neutral": 0.34074074074074073,
+        "positive": 0.944372574385511
       },
-      "seconds_per_1000": 0.025554299994837493
+      "seconds_per_1000": 0.024270999943837523
     },
     "transformer": {
-      "accuracy": 0.922,
-      "f1_macro": 0.7558073498425951,
+      "accuracy": 0.917,
+      "f1_macro": 0.7523453350673711,
       "f1": {
-        "negative": 0.8338192419825073,
-        "neutral": 0.4691358024691358,
-        "positive": 0.9644670050761421
+        "negative": 0.84472049689441,
+        "neutral": 0.4485981308411215,
+        "positive": 0.9637173774665818
       },
-      "seconds_per_1000": 8.321720600011759
+      "seconds_per_1000": 10.257550900045317
     },
     "llm": {
-      "accuracy": 0.871,
-      "f1_macro": 0.654586947438519,
+      "accuracy": 0.883,
+      "f1_macro": 0.6977028145657836,
       "f1": {
-        "negative": 0.8539325842696629,
-        "neutral": 0.17886178861788618,
-        "positive": 0.9309664694280079
+        "negative": 0.8780487804878049,
+        "neutral": 0.272108843537415,
+        "positive": 0.9429508196721311
       },
-      "seconds_per_1000": 1104.6938310000114
+      "seconds_per_1000": 426.8663019000087
     }
   },
-  "keywords_seconds_per_1000": 0.046420999977272004,
+  "keywords_seconds_per_1000": 0.06633700005477294,
   "llm_tokens_per_1000": {
-    "input": 208325,
-    "output": 86336
+    "input": 290816,
+    "output": 60220
   },
-  "llm_quotes_verbatim": 0.9625629949604032
+  "llm_quotes_verbatim": 0.9837940896091516
 }

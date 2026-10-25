@@ -22,7 +22,7 @@ from src.pipeline import LLM_WORKERS, METHODS, run_methods, write_report
 from src.sentiment import train_tfidf
 
 COLUMNS = [
-    "parent_asin", "rating", "sentiment", "title", "text", "timestamp",
+    "parent_asin", "product_title", "rating", "sentiment", "title", "text", "timestamp",
     *(f"sent_{method}" for method in METHODS), "topics_keywords", "topics_llm", "llm_input_tokens", "llm_output_tokens",
 ]
 

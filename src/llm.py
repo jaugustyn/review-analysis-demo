@@ -7,6 +7,7 @@ against the review text, because a model can "quote" words that the customer nev
 import json
 import re
 from dataclasses import dataclass
+from functools import cache
 
 from src.config import LLM_MODEL, OLLAMA_URL
 from src.topics import TOPIC_LABELS
@@ -37,21 +38,26 @@ REVIEW_PROMPT = """Analyse this customer review of a home appliance product.
 {text}
 </review>
 
-1. sentiment: the overall sentiment of the review: negative, neutral or positive.
-2. topics: what the customer praises or criticises, only among these topics:
-   - quality: how well the product works, how long it lasts, defects
+1. sentiment: the overall sentiment of the review: negative (unhappy), neutral (mixed or lukewarm)
+   or positive (happy).
+2. topics: what the customer explicitly praises or criticises, only among these topics:
+   - quality: build quality and durability: well made or flimsy, still going after years, broke, leaks,
+     stopped working, arrived defective
+   - fit: whether it fits or is compatible with the customer's appliance or model, the right size
    - price: price and value for money
-   - delivery: shipping, packaging, condition on arrival
+   - delivery: shipping speed, packaging, arrived damaged
    - service: seller or manufacturer support, returns, refunds, warranty
+   Not topics: whether the product works well or badly, is easy to install or is useful.
+   Many reviews mention no topic at all; then return an empty list.
    For each topic mentioned give the polarity (positive or negative) and a short quote copied word for word
-   from the review (at most 20 words). Leave out topics the review does not mention."""
+   from the review (at most 20 words)."""
 
 REPORT_SCHEMA = {
     "type": "object",
     "properties": {
         "summary": {"type": "string"},
-        "strengths": {"type": "array", "items": {"type": "string"}, "minItems": 3, "maxItems": 3},
-        "improvements": {"type": "array", "items": {"type": "string"}, "minItems": 3, "maxItems": 3},
+        "strengths": {"type": "array", "items": {"type": "string"}, "minItems": 1, "maxItems": 3},
+        "improvements": {"type": "array", "items": {"type": "string"}, "minItems": 1, "maxItems": 3},
     },
     "required": ["summary", "strengths", "improvements"],
 }
@@ -65,9 +71,10 @@ Ile opinii chwali lub krytykuje dany temat, z przykładowymi cytatami (po angiel
 
 Napisz po polsku krótki raport dla menedżera:
 - summary: jedno zdanie o ogólnym odbiorze produktu,
-- strengths: dokładnie 3 rzeczy, które klienci chwalą,
-- improvements: dokładnie 3 rzeczy do poprawy.
-Każdy punkt to jedno konkretne zdanie. Opieraj się wyłącznie na powyższych danych, nie dodawaj faktów spoza nich."""
+- strengths: od 1 do 3 rzeczy, które klienci chwalą,
+- improvements: od 1 do 3 rzeczy do poprawy.
+Każdy punkt to jedno konkretne zdanie. Opieraj się wyłącznie na powyższych danych, nie dodawaj faktów spoza nich.
+Porównuj liczby: temat, który więcej opinii krytykuje, niż chwali, nie jest mocną stroną produktu."""
 
 
 @dataclass
@@ -78,10 +85,16 @@ class LLMCall:
     seconds: float
 
 
-def _chat(prompt: str, schema: dict, model: str) -> LLMCall:
+@cache
+def _client():
+    """One client for all requests, so connections are reused (the client is thread-safe)."""
     import ollama
 
-    response = ollama.Client(host=OLLAMA_URL).chat(
+    return ollama.Client(host=OLLAMA_URL)
+
+
+def _chat(prompt: str, schema: dict, model: str) -> LLMCall:
+    response = _client().chat(
         model=model, messages=[{"role": "user", "content": prompt}], format=schema,
         options={"temperature": 0}, think=False,
     )

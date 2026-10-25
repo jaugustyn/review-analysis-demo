@@ -28,8 +28,10 @@ def sentiment_from_rating(rating: pd.Series) -> pd.Series:
 
 
 def _clean(text: str) -> str:
-    """Removes HTML line breaks and video placeholders such as [[VIDEOID:...]]."""
+    """Removes HTML line breaks and video placeholders such as [[VIDEOID:...]]; a link to another product
+    ([[ASIN:B00SPYDSFC Whirlpool Adjuster Kit]]) becomes the product name."""
     text = re.sub(r"<br\s*/?>|\[\[VIDEOID:[^\]]*\]\]", " ", html.unescape(text or ""))
+    text = re.sub(r"\[\[ASIN:\w+\s*([^\]]*)\]\]", r"\1", text)
     return re.sub(r"\s+", " ", text).strip()
 
 
@@ -63,7 +65,8 @@ def convert_products() -> None:
 
 def make_splits() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Demo: newest reviews of the demo products. Evaluation and training: random reviews
-    of the other products, so no method is tested on reviews it learned from."""
+    of the other products, so no method is tested on reviews it learned from.
+    Demo and evaluation reviews get the product name, shown in the app."""
     reviews = pd.read_parquet(REVIEWS_PATH)
     is_demo = reviews["parent_asin"].isin(DEMO_PRODUCT_IDS)
     demo = (
@@ -71,17 +74,26 @@ def make_splits() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         .sort_values("timestamp", ascending=False)
         .groupby("parent_asin")
         .head(DEMO_REVIEWS_PER_PRODUCT)
+        .reset_index(drop=True)
     )
     rest = reviews[~is_demo]
     evaluation = rest.sample(EVAL_SIZE, random_state=SEED)
     train = rest.drop(evaluation.index).sample(TRAIN_SIZE, random_state=SEED)
-    return demo.reset_index(drop=True), evaluation.reset_index(drop=True), train.reset_index(drop=True)
+    evaluation = evaluation.reset_index(drop=True)
+    titles = product_titles([*demo["parent_asin"].unique(), *evaluation["parent_asin"].unique()])
+    for df in (demo, evaluation):
+        df["product_title"] = df["parent_asin"].map(titles).fillna(df["parent_asin"])
+    return demo, evaluation, train.reset_index(drop=True)
 
 
 def product_id_from_link(link: str) -> str | None:
     """Amazon product ID (ASIN) from a product link such as amazon.com/.../dp/B07XYZ1234, or a bare ID."""
     match = re.search(r"(?:/dp/|/gp/product/|/product-reviews/|^)([A-Z0-9]{10})(?:[/?#]|$)", link.strip())
     return match.group(1) if match else None
+
+
+def amazon_link(product_id: str) -> str:
+    return f"https://www.amazon.com/dp/{product_id}"
 
 
 def load_product_reviews(product_id: str, limit: int) -> tuple[str, pd.DataFrame] | None:

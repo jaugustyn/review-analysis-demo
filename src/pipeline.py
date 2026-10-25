@@ -14,7 +14,7 @@ from src.llm import analyse_review, product_report
 from src.sentiment import transformer, vader
 from src.topics import TOPIC_LABELS, keyword_topics, topic_summary
 
-LLM_WORKERS = 4  # Ollama answers about 4 requests at once on one GPU; more does not speed it up
+LLM_WORKERS = 4  # with OLLAMA_NUM_PARALLEL=4 about 1.6x faster than one at a time
 METHODS = ["vader", "tfidf", "transformer", "llm"]
 
 

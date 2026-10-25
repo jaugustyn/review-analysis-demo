@@ -27,28 +27,32 @@ TFIDF_PATH = MODELS_DIR / "tfidf.joblib"
 RESULTS_DIR = ROOT / "results"
 
 SEED = 42
-# Popular products of different types (the top 10 by review count are mostly filters).
+# Products of brands well known in Poland, of different types and ratings. The data has few whole appliances
+# of such brands, so some are accessories.
 DEMO_PRODUCT_IDS = [
-    "B09YC8YCV6",  # Cuisinart SS-10P1 coffee maker
-    "B01ALBMIEI",  # Giantex portable washing machine
-    "B07YF9SGBW",  # GE Profile Opal nugget ice maker
-    "B07NVJP82G",  # AGLUCKY countertop ice maker
-    "B0BW9B4YZL",  # Broan-NuTone range hood insert
-    "B0C35WFNZF",  # COSMO 5U30 range hood
-    "B0B3DB5HTC",  # K&J Keurig water filters, 12 pack
-    "B08YBGCNHP",  # SAMSUNG genuine refrigerator filter
-    "B07WTXWC32",  # Linda's Essentials stove gap covers
-    "B081K4Q6KQ",  # Cimkiz dishwasher clean/dirty magnet
+    "B01CBWDY0C",  # refillable capsules for Nespresso machines
+    "B0C69HCVRM",  # BLACK+DECKER mini fridge
+    "B002UYSHMM",  # Haier portable washer
+    "B08FDBWTDB",  # BLACK+DECKER countertop dishwasher
+    "B08YBGCNHP",  # SAMSUNG refrigerator water filter
+    "B002Y2S536",  # BOSCH refrigerator water filter
+    "B0BMPQXGMG",  # LG washing machine drain pump
+    "B07JMNYK7X",  # De'Longhi milk frothing pitcher
+    "B01251BJX8",  # KRUPS permanent coffee filter
+    "B00WA6TGDE",  # Melitta cone coffee filters
 ]
 DEMO_REVIEWS_PER_PRODUCT = 200  # newest reviews of each demo product
 LIVE_REVIEWS = 100  # newest reviews of a product analysed live
+LIVE_EXAMPLE_LINK = "https://www.amazon.com/dp/B0C1ZXTW1T"  # Electrolux water filter, not a demo product
 EVAL_SIZE = 1000  # the same reviews for every method
 TRAIN_SIZE = 100_000  # training data for TF-IDF + logistic regression
 
 # Trained on product reviews (1–5 stars); best of three candidates on the evaluation set.
 TRANSFORMER_MODEL = "nlptown/bert-base-multilingual-uncased-sentiment"
-OLLAMA_URL = "http://localhost:11434"
-LLM_MODEL = "qwen3.5:9b"  # to be replaced after comparing newer models
+# Not "localhost": on Windows it tries IPv6 first and every new connection waits about 2 s.
+OLLAMA_URL = "http://127.0.0.1:11434"
+# Best of five local models that fit a 12 GB GPU (sentiment F1, speed, sensible topics); needs Ollama 0.40+.
+LLM_MODEL = "gemma4:12b"
 
 # What the LLM part would cost through an API: the cheapest current-generation model of three providers,
 # USD per 1M tokens, standard tier, checked on API_PRICES_CHECKED.

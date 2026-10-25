@@ -9,8 +9,8 @@ import streamlit as st
 from src.app_data import load_eval, load_metrics
 from src.config import API_PRICES, API_PRICES_CHECKED, USD_PLN, USD_PLN_SOURCE
 from src.formatting import (
-    BLUE, GRAY, INK, METHOD_LABELS, ORANGE, SENTIMENT_LABELS, SOURCE_LABELS, fmt_int, fmt_num, fmt_pct, fmt_pln,
-    fmt_seconds,
+    GRAY, INK, METHOD_LABELS, NEGATIVE, NEUTRAL, POSITIVE, SENTIMENT_LABELS, SOURCE_LABELS, TEAL, fmt_int, fmt_num,
+    fmt_pct, fmt_pln, fmt_seconds,
 )
 from src.topics import TOPIC_LABELS
 
@@ -25,8 +25,11 @@ st.caption(f"Te same {fmt_int(n)} opinii dla każdej metody. Prawdą jest ocena 
            "1–2★ to opinia negatywna, 3★ neutralna, 4–5★ pozytywna.")
 
 best = max(methods, key=lambda m: methods[m]["f1_macro"])
+best_negative = max(methods, key=lambda m: methods[m]["f1"]["negative"])
 st.markdown(
-    f"Najlepiej rozpoznaje sentyment **{METHOD_LABELS[best]}** (F1 makro {fmt_num(methods[best]['f1_macro'])}). "
+    f"Najlepiej rozpoznaje sentyment **{METHOD_LABELS[best]}** (F1 makro {fmt_num(methods[best]['f1_macro'])}), "
+    f"a opinie negatywne najlepiej wyłapuje **{METHOD_LABELS[best_negative]}** "
+    f"(F1 {fmt_num(methods[best_negative]['f1']['negative'])}). "
     f"Słownik jest najtańszy i najszybszy, ale wyraźnie słabszy (F1 makro {fmt_num(methods['vader']['f1_macro'])})."
 )
 table = pd.DataFrame({
@@ -34,16 +37,15 @@ table = pd.DataFrame({
     "Trafność": [fmt_pct(v["accuracy"], 1) for v in methods.values()],
     "F1 makro": [fmt_num(v["f1_macro"]) for v in methods.values()],
     "Czas na 1000 opinii": [fmt_seconds(v["seconds_per_1000"]) for v in methods.values()],
-    "Koszt na 1000 opinii": ["0 zł (lokalnie)"] * len(methods),
 })
 st.dataframe(table, hide_index=True, width="stretch", column_config={
     "Trafność": right,
     "F1 makro": st.column_config.TextColumn(
         alignment="right", help="Średnia F1 z trzech klas: każda liczy się tak samo, także rzadkie opinie neutralne."),
     "Czas na 1000 opinii": right,
-    "Koszt na 1000 opinii": right,
 })
-st.caption(f"Czas zmierzony na {metrics['gpu']}. LLM: {metrics['llm_model']} przez Ollamę, "
+st.caption(f"Wszystkie metody działały lokalnie, bez opłat. Czas zmierzony na {metrics['gpu']}. "
+           f"LLM: {metrics['llm_model']} przez Ollamę, "
            f"{metrics['llm_workers']} zapytania naraz. Klasyczne ML uczyło się "
            f"{fmt_seconds(metrics['tfidf_train_seconds'])} na {fmt_int(metrics['tfidf_train_reviews'])} innych opiniach.")
 
@@ -53,15 +55,18 @@ per_class = pd.DataFrame([
     for m, v in methods.items() for c in SENTIMENT_LABELS
 ])
 classes = list(SENTIMENT_LABELS.values())
-chart = alt.Chart(per_class).mark_bar(height=12).encode(
-    x=alt.X("F1:Q", scale=alt.Scale(domain=[0, 1]), title="F1 (1 = bez błędów)"),
+per_class["Etykieta"] = per_class["F1"].map(fmt_num)
+chart = alt.Chart(per_class).mark_bar(height=12, cornerRadius=3).encode(
+    x=alt.X("F1:Q", scale=alt.Scale(domain=[0, 1]), title="F1 (1 = bez błędów)",
+            axis=alt.Axis(values=[0, 0.2, 0.4, 0.6, 0.8, 1], labelExpr="replace(format(datum.value, '.1f'), '.', ',')")),
     y=alt.Y("Metoda:N", sort=[METHOD_LABELS[m] for m in methods], title=None, axis=alt.Axis(labelLimit=240)),
     yOffset=alt.YOffset("Klasa:N", sort=classes),
     color=alt.Color("Klasa:N", sort=classes, title=None, legend=alt.Legend(orient="top"),
-                    scale=alt.Scale(domain=classes, range=[ORANGE, GRAY, BLUE])),
+                    scale=alt.Scale(domain=classes, range=[NEGATIVE, NEUTRAL, POSITIVE])),
     tooltip=["Metoda:N", "Klasa:N", alt.Tooltip("F1:Q", format=".2f")],
 )
-st.altair_chart(chart.properties(height=320), width="stretch")
+labels = chart.mark_text(align="left", dx=4, fontSize=11).encode(text="Etykieta:N", color=alt.value(INK))
+st.altair_chart((chart + labels).properties(height=320), width="stretch")
 shares = metrics["class_shares"]
 st.caption(f"Opinii neutralnych jest tylko {fmt_pct(shares.get('neutral', 0), 1)}, więc ich wynik jest najmniej pewny. "
            "Wszystkie metody radzą sobie z nimi najgorzej.")
@@ -87,15 +92,15 @@ counts = pd.DataFrame([
     for source in SOURCE_LABELS for raw in evaluated[f"topics_{source}"] for item in json.loads(raw)
 ]).value_counts().rename("Wzmianki").reset_index()
 sources = list(SOURCE_LABELS.values())
-chart = alt.Chart(counts).mark_bar(height=14).encode(
-    x=alt.X("Wzmianki:Q", title=f"Wzmianki o temacie w {fmt_int(n)} opiniach"),
+chart = alt.Chart(counts).mark_bar(height=14, cornerRadius=3).encode(
+    x=alt.X("Wzmianki:Q", title=f"Wzmianki o temacie w {fmt_int(n)} opiniach", axis=alt.Axis(format="d")),
     y=alt.Y("Temat:N", sort=list(TOPIC_LABELS.values()), title=None),
     yOffset=alt.YOffset("Źródło:N", sort=sources),
     color=alt.Color("Źródło:N", sort=sources, title=None, legend=alt.Legend(orient="top"),
-                    scale=alt.Scale(domain=sources, range=[GRAY, INK])),
+                    scale=alt.Scale(domain=sources, range=[GRAY, TEAL])),
     tooltip=["Temat:N", "Źródło:N", "Wzmianki:Q"],
 )
-st.altair_chart(chart.properties(height=260), width="stretch")
+st.altair_chart(chart.properties(height=320), width="stretch")
 st.markdown(
     f"Słownik znajduje temat tylko wtedy, gdy padnie jedno ze słów z listy, a wydźwięk ocenia po słowach w zdaniu. "
     f"LLM rozumie sens, ale czasem cytuje słowa, których klient nie napisał: dosłownych cytatów jest "

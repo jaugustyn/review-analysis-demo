@@ -11,11 +11,14 @@ METHOD_LABELS = {
 SENTIMENT_LABELS = {"negative": "negatywna", "neutral": "neutralna", "positive": "pozytywna"}
 SOURCE_LABELS = {"keywords": "Słownik słów kluczowych", "llm": "LLM"}
 
-# Blue for praise, orange for complaints (a validated pair); ink and gray for context.
-BLUE = "#1F5FBF"
-ORANGE = "#EB6834"
-INK = "#172033"
-GRAY = "#B5B2A8"
+# Aqua for praise and positive reviews, orange for complaints and negative ones (a pair checked for color
+# blindness; the bars carry numbers, as the light aqua is low-contrast). Gray for neutral, teal for the LLM.
+POSITIVE = "#1BAF7A"
+NEGATIVE = "#EB6834"
+NEUTRAL = "#C3C2B7"
+TEAL = "#0F766E"
+INK = "#13292D"
+GRAY = "#9DAAA7"
 
 
 def fmt_int(value: float) -> str:
