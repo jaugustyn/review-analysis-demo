@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.py[oc]
+
+# Downloaded reviews (prepare_data.py) and the TF-IDF model (analyze.py)
+data/
+models/

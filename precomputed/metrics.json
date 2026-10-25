@@ -1,0 +1,63 @@
+{
+  "date": "2026-10-25",
+  "gpu": "NVIDIA GeForce RTX 5070",
+  "llm_model": "qwen3.5:9b",
+  "llm_workers": 4,
+  "transformer_model": "nlptown/bert-base-multilingual-uncased-sentiment",
+  "tfidf_train_reviews": 100000,
+  "tfidf_train_seconds": 7.843597800005227,
+  "eval_reviews": 1000,
+  "class_shares": {
+    "positive": 0.811,
+    "negative": 0.154,
+    "neutral": 0.035
+  },
+  "methods": {
+    "vader": {
+      "accuracy": 0.805,
+      "f1_macro": 0.5276638730948481,
+      "f1": {
+        "negative": 0.6408450704225352,
+        "neutral": 0.047244094488188976,
+        "positive": 0.89490245437382
+      },
+      "seconds_per_1000": 0.09559649997390807
+    },
+    "tfidf": {
+      "accuracy": 0.901,
+      "f1_macro": 0.6964355277155674,
+      "f1": {
+        "negative": 0.8260869565217391,
+        "neutral": 0.3076923076923077,
+        "positive": 0.9555273189326556
+      },
+      "seconds_per_1000": 0.025554299994837493
+    },
+    "transformer": {
+      "accuracy": 0.922,
+      "f1_macro": 0.7558073498425951,
+      "f1": {
+        "negative": 0.8338192419825073,
+        "neutral": 0.4691358024691358,
+        "positive": 0.9644670050761421
+      },
+      "seconds_per_1000": 8.321720600011759
+    },
+    "llm": {
+      "accuracy": 0.871,
+      "f1_macro": 0.654586947438519,
+      "f1": {
+        "negative": 0.8539325842696629,
+        "neutral": 0.17886178861788618,
+        "positive": 0.9309664694280079
+      },
+      "seconds_per_1000": 1104.6938310000114
+    }
+  },
+  "keywords_seconds_per_1000": 0.046420999977272004,
+  "llm_tokens_per_1000": {
+    "input": 208325,
+    "output": 86336
+  },
+  "llm_quotes_verbatim": 0.9625629949604032
+}
