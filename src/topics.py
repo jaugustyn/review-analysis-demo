@@ -1,7 +1,7 @@
 """Topics with a keyword dictionary: the cheap alternative to the LLM.
 
-A sentence that contains a topic keyword is one mention of that topic. Its polarity comes from VADER
-for that sentence, and the sentence itself is the quote.
+A sentence that contains a topic keyword is one mention of that topic. Its polarity comes from the Polish
+sentiment dictionary for that sentence, and the sentence itself is the quote.
 """
 
 import json
@@ -10,37 +10,36 @@ import re
 import pandas as pd
 
 TOPIC_LABELS = {
-    "quality": "Jakość", "fit": "Dopasowanie", "price": "Cena", "delivery": "Dostawa", "service": "Obsługa",
+    "quality": "Jakość", "description": "Zgodność z opisem", "price": "Cena", "delivery": "Dostawa",
+    "service": "Obsługa klienta",
 }
 
+# Beginnings of words, so that one entry covers all forms: "zepsu" matches "zepsuł", "zepsuta", "zepsuło".
+# In a phrase every word is such a beginning: "obsług klient" matches "obsługa klienta" and "obsługi klienta".
 TOPIC_KEYWORDS = {
     "quality": [
-        "quality", "durable", "sturdy", "flimsy", "well made", "well-made", "poorly made", "cheaply made",
-        "broke", "broken", "defective", "stopped working", "quit working", "died", "leak", "leaks", "leaked",
-        "leaking", "malfunction", "falling apart", "fell apart", "lasted", "durability", "defect", "failed",
-        "cracked", "rust", "rusted", "melted", "junk", "garbage",
+        "jakoś", "wykonani", "solidn", "trwał", "wytrzymał", "porządn", "zepsu", "popsu", "psuj", "awari", "usterk",
+        "wadliw", "uszkodz", "pękn", "przestał działa", "rozpad", "tandet", "bubel", "badziew", "przecieka", "rdz",
     ],
-    "fit": [
-        "fit", "fits", "fitted", "compatible", "compatibility", "incompatible", "too small", "too big",
-        "too large", "too short", "wrong size", "right size", "perfect size", "exact replacement", "exact match",
-        "direct replacement", "model number",
+    "description": [
+        "zgodn z opis", "niezgodn", "opis", "oryginaln", "podrób", "rozmiar", "pasuj", "kompatybiln",
+        "jak na zdjęci", "używan",
     ],
     "price": [
-        "price", "priced", "expensive", "inexpensive", "affordable", "cheaper", "worth", "value", "money",
-        "overpriced", "cost", "bargain", "deal",
+        "cen", "tani", "tanio", "drog", "droż", "opłacaln", "pieniądz", "pieniędz", "promocj", "okazj", "koszt",
+        "przepłac",
     ],
     "delivery": [
-        "shipping", "shipped", "delivery", "delivered", "arrived", "arrive", "package", "packaging", "packaged",
-        "on time", "dented", "damaged in shipping", "came damaged",
+        "dostaw", "dostarcz", "przesyłk", "paczk", "kurier", "wysyłk", "wysłan", "doszł", "doszed", "dotarł",
+        "opakowani", "zapakowan", "paczkomat",
     ],
     "service": [
-        "customer service", "customer support", "seller", "refund", "refunded", "return", "returned",
-        "returning", "warranty", "support", "contacted", "responded", "responsive", "sent a replacement",
-        "sent me a replacement",
+        "obsług klient", "obsług sklep", "obsług zamówieni", "sprzedawc", "sprzedając", "sklep", "reklamac",
+        "gwarancj", "zwrot", "zwróci", "serwis", "kontakt", "faktur", "infolini", "konsultant",
     ],
 }
 _PATTERNS = {
-    topic: re.compile(r"\b(" + "|".join(re.escape(k) for k in keywords) + r")\b", re.IGNORECASE)
+    topic: re.compile(r"\b(?:" + "|".join(k.replace(" ", r"\w*\s+") for k in keywords) + ")", re.IGNORECASE)
     for topic, keywords in TOPIC_KEYWORDS.items()
 }
 
@@ -51,9 +50,8 @@ def _sentences(text: str) -> list[str]:
 
 def keyword_topics(texts: list[str]) -> list[list[dict]]:
     """For each review: [{"topic", "polarity", "quote"}], one per topic mentioned (first matching sentence)."""
-    from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+    from src.sentiment import lexicon_score
 
-    analyzer = SentimentIntensityAnalyzer()
     results = []
     for text in texts:
         found = {}
@@ -61,8 +59,8 @@ def keyword_topics(texts: list[str]) -> list[list[dict]]:
             for topic, pattern in _PATTERNS.items():
                 if topic in found or not pattern.search(sentence):
                     continue
-                score = analyzer.polarity_scores(sentence)["compound"]
-                if abs(score) >= 0.05:  # a neutral sentence says nothing good or bad about the topic
+                score = lexicon_score(sentence)
+                if score:  # a neutral sentence says nothing good or bad about the topic
                     found[topic] = {"topic": topic, "polarity": "positive" if score > 0 else "negative",
                                     "quote": sentence}
         results.append(list(found.values()))

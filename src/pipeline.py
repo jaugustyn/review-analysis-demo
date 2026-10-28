@@ -9,13 +9,12 @@ import pandas as pd
 from sklearn.pipeline import Pipeline
 
 from src.config import TRANSFORMER_MODEL
-from src.data import review_text
 from src.llm import analyse_review, product_report
-from src.sentiment import transformer, vader
+from src.sentiment import lexicon, transformer
 from src.topics import TOPIC_LABELS, keyword_topics, topic_summary
 
 LLM_WORKERS = 4  # with OLLAMA_NUM_PARALLEL=4 about 1.6x faster than one at a time
-METHODS = ["vader", "tfidf", "transformer", "llm"]
+METHODS = ["lexicon", "tfidf", "transformer", "llm"]
 
 
 def run_methods(
@@ -23,12 +22,12 @@ def run_methods(
 ) -> tuple[pd.DataFrame, dict[str, float]]:
     """Adds a sentiment column per method (sent_<method>), topics from keywords and from the LLM (JSON lists)
     and LLM token counts. Returns the results and the time each step took, in seconds."""
-    texts = [review_text(title, text) for title, text in zip(reviews["title"], reviews["text"])]
+    texts = reviews["text"].tolist()
     out = reviews.copy()
     seconds = {}
 
     steps = {
-        "vader": lambda: vader(texts),
+        "lexicon": lambda: lexicon(texts),
         "tfidf": lambda: tfidf.predict(texts).tolist(),
         "transformer": lambda: transformer(texts, TRANSFORMER_MODEL),
     }

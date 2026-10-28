@@ -33,7 +33,7 @@ REVIEW_SCHEMA = {
     "required": ["sentiment", "topics"],
 }
 
-REVIEW_PROMPT = """Analyse this customer review of a home appliance product.
+REVIEW_PROMPT = """Analyse this customer review of a product bought online. The review is in Polish.
 
 <review>
 {text}
@@ -42,38 +42,39 @@ REVIEW_PROMPT = """Analyse this customer review of a home appliance product.
 1. sentiment: the overall sentiment of the review: negative (unhappy), neutral (mixed or lukewarm)
    or positive (happy).
 2. topics: what the customer explicitly praises or criticises, only among these topics:
-   - quality: build quality and durability: well made or flimsy, still going after years, broke, leaks,
+   - quality: build quality and durability: well or poorly made, still works after a long time, broke,
      stopped working, arrived defective
-   - fit: whether it fits or is compatible with the customer's appliance or model, the right size
+   - description: whether the product matches its description or photos: original or fake, new or used,
+     the right size or model, fits or is compatible
    - price: price and value for money
-   - delivery: shipping speed, packaging, arrived damaged
-   - service: seller or manufacturer support, returns, refunds, warranty
-   Not topics: whether the product works well or badly, is easy to install or is useful.
+   - delivery: delivery speed, courier, packaging, arrived damaged
+   - service: customer service of the shop or the manufacturer: contact, returns, complaints, warranty, invoices
+   Not topics: whether the product works well or badly, is easy to use or is useful.
    Many reviews mention no topic at all; then return an empty list.
    For each topic mentioned give the polarity (positive or negative) and a short quote copied word for word
-   from the review (at most 20 words)."""
+   from the review, in Polish (at most 20 words)."""
 
 REPORT_SCHEMA = {
     "type": "object",
     "properties": {
         "summary": {"type": "string"},
-        "strengths": {"type": "array", "items": {"type": "string"}, "minItems": 1, "maxItems": 3},
-        "improvements": {"type": "array", "items": {"type": "string"}, "minItems": 1, "maxItems": 3},
+        "strengths": {"type": "array", "items": {"type": "string"}, "maxItems": 3},
+        "improvements": {"type": "array", "items": {"type": "string"}, "maxItems": 3},
     },
     "required": ["summary", "strengths", "improvements"],
 }
 
-REPORT_PROMPT = """Jesteś analitykiem opinii klientów w sklepie internetowym ze sprzętem AGD.
+REPORT_PROMPT = """Jesteś analitykiem opinii klientów w sklepie internetowym.
 Produkt: {title}
 Liczba przeanalizowanych opinii: {n_reviews}
 
-Ile opinii chwali lub krytykuje dany temat, z przykładowymi cytatami (po angielsku, od klientów):
+Ile opinii chwali lub krytykuje dany temat, z przykładowymi cytatami z opinii klientów:
 {evidence}
 
 Napisz po polsku krótki raport dla menedżera:
 - summary: jedno zdanie o ogólnym odbiorze produktu,
-- strengths: od 1 do 3 rzeczy, które klienci chwalą,
-- improvements: od 1 do 3 rzeczy do poprawy.
+- strengths: do 3 rzeczy, które klienci chwalą (pusta lista, jeśli nikt niczego nie chwali),
+- improvements: do 3 rzeczy do poprawy (pusta lista, jeśli nikt niczego nie krytykuje).
 Każdy punkt to jedno konkretne zdanie. Opieraj się wyłącznie na powyższych danych, nie dodawaj faktów spoza nich.
 Porównuj liczby: temat, który więcej opinii krytykuje, niż chwali, nie jest mocną stroną produktu."""
 

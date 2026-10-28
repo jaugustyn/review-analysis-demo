@@ -1,19 +1,20 @@
-"""Shared settings: paths, data sizes and model names."""
+"""Shared settings: paths, data sources, demo products and model names."""
 
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-# Raw data (downloaded by prepare_data.py, not in git)
+# Downloaded by prepare_data.py (not in git)
 DATA_DIR = ROOT / "data"
-DATA_URL = "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw"
-RAW_REVIEWS = DATA_DIR / "Appliances.jsonl"
-RAW_META = DATA_DIR / "meta_Appliances.jsonl"
-REVIEWS_PATH = DATA_DIR / "reviews.parquet"  # all reviews, sorted by product, for the live analysis
-PRODUCTS_PATH = DATA_DIR / "products.parquet"
-DEMO_INPUT = DATA_DIR / "demo.parquet"
-EVAL_INPUT = DATA_DIR / "eval.parquet"
-TRAIN_INPUT = DATA_DIR / "train.parquet"
+# Allegro Reviews (KLEJ benchmark, CC BY-SA 4.0): Polish product reviews with 1–5 stars,
+# to train TF-IDF and to compare the methods.
+ALLEGRO_URL = "https://huggingface.co/api/datasets/allegro/klej-allegro-reviews/parquet/default/{split}/0.parquet"
+ALLEGRO_TRAIN = DATA_DIR / "allegro_train.parquet"
+ALLEGRO_TEST = DATA_DIR / "allegro_test.parquet"
+# Polish sentiment dictionary by A. Wawer (IPI PAN): base forms of words with scores from -2 to 2.
+LEXICON_URL = "https://zil.ipipan.waw.pl/SlownikWydzwieku?action=AttachFile&do=get&target=slownikWydzwieku01.csv"
+LEXICON_PATH = DATA_DIR / "slownik_wydzwieku.csv"
+DEMO_INPUT = DATA_DIR / "demo.parquet"  # reviews of the demo products, fetched from Ceneo
 
 # Results computed once by analyze.py (in git, read by the app)
 PRECOMPUTED_DIR = ROOT / "precomputed"
@@ -27,27 +28,24 @@ TFIDF_PATH = MODELS_DIR / "tfidf.joblib"
 RESULTS_DIR = ROOT / "results"
 
 SEED = 42
-# Products of brands well known in Poland, of different types and ratings. The data has few whole appliances
-# of such brands, so some are accessories.
+# Ceneo product IDs (https://www.ceneo.pl/<ID>). The first page of reviews of each is fetched by prepare_data.py.
 DEMO_PRODUCT_IDS = [
-    "B01CBWDY0C",  # refillable capsules for Nespresso machines
-    "B0C69HCVRM",  # BLACK+DECKER mini fridge
-    "B002UYSHMM",  # Haier portable washer
-    "B08FDBWTDB",  # BLACK+DECKER countertop dishwasher
-    "B08YBGCNHP",  # SAMSUNG refrigerator water filter
-    "B002Y2S536",  # BOSCH refrigerator water filter
-    "B0BMPQXGMG",  # LG washing machine drain pump
-    "B07JMNYK7X",  # De'Longhi milk frothing pitcher
-    "B01251BJX8",  # KRUPS permanent coffee filter
-    "B00WA6TGDE",  # Melitta cone coffee filters
+    "120252432",  # fridge
+    "50562241",   # coffee machine
+    "170194155",  # washing machine
+    "182519828",  # vacuum cleaner
+    "167406299",  # air fryer
+    "45033962",   # electric kettle
+    "101400465",  # dishwasher
+    "99493041",   # dishwasher
+    "99047227",   # fridge
+    "130004065",  # hair dryer
 ]
-DEMO_REVIEWS_PER_PRODUCT = 200  # newest reviews of each demo product
-LIVE_REVIEWS = 100  # newest reviews of a product analysed live
-LIVE_EXAMPLE_LINK = "https://www.amazon.com/dp/B0C1ZXTW1T"  # Electrolux water filter, not a demo product
-EVAL_SIZE = 1000  # the same reviews for every method
-TRAIN_SIZE = 100_000  # training data for TF-IDF + logistic regression
+CENEO_PAUSE = 3  # seconds between product pages fetched one after another
+LIVE_EXAMPLE_LINK = "https://www.ceneo.pl/157145031"  # Apple iPhone 15 256GB, not a demo product
 
-# Trained on product reviews (1–5 stars); best of three candidates on the evaluation set.
+# Multilingual, trained on product reviews (1–5 stars). A Polish model (Voicelab HerBERT) scored much higher,
+# but it was most likely trained on Allegro Reviews, so it cannot be compared fairly on that data.
 TRANSFORMER_MODEL = "nlptown/bert-base-multilingual-uncased-sentiment"
 # Not "localhost": on Windows it tries IPv6 first and every new connection waits about 2 s.
 OLLAMA_URL = "http://127.0.0.1:11434"

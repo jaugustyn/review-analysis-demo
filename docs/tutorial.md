@@ -1,11 +1,11 @@
 # Jak korzystać z Głosu Klienta
 
-Głos Klienta czyta opinie o produkcie i pokazuje, co klienci chwalą, a na co narzekają, w pięciu tematach:
-**jakość**, **dopasowanie**, **cena**, **dostawa** i **obsługa**. Do każdego tematu podaje cytaty z opinii, a model
-językowy (LLM) pisze krótki raport dla menedżera. Aplikacja porównuje też cztery metody analizy, od prostego
-słownika po LLM.
+Głos Klienta czyta polskie opinie o produkcie i pokazuje, co klienci chwalą, a na co narzekają, w pięciu tematach:
+**jakość**, **zgodność z opisem**, **cena**, **dostawa** i **obsługa klienta**. Do każdego tematu podaje cytaty
+z opinii, a model językowy (LLM) pisze krótki raport dla menedżera. Aplikacja porównuje też cztery metody analizy,
+od prostego słownika po LLM.
 
-Opinie pochodzą ze zbioru Amazon Reviews 2023 (kategoria AGD) i są po angielsku, interfejs jest po polsku.
+Opinie o produktach pochodzą z Ceneo.pl, a do porównania metod służy publiczny zbiór Allegro Reviews.
 Jak uruchomić aplikację, opisuje [README](../README.md). Liczby w tym tutorialu dotyczą wyników zapisanych
 w repozytorium (LLM: `gemma4:12b`).
 
@@ -13,41 +13,40 @@ w repozytorium (LLM: `gemma4:12b`).
 
 ![Produkt](img/product.png)
 
-Wybierz jeden z 10 produktów demo, głównie marek znanych w Polsce (Samsung, Bosch, LG, Haier, De'Longhi, Krups,
-Melitta i inne). Dla każdego aplikacja przeanalizowała 200 najnowszych opinii.
+Wybierz jeden z 10 produktów demo z Ceneo. Dla każdego aplikacja przeanalizowała pierwszą stronę opinii,
+czyli zwykle 10 opinii w kolejności wybranej przez Ceneo.
 
-- **Kafelki** na górze: liczba opinii, średnia ocena oraz odsetek opinii pozytywnych (4–5★) i negatywnych (1–2★).
+- **Kafelki** na górze: ile opinii przeanalizowano i ile ma produkt na Ceneo, średnia ocena oraz odsetek opinii
+  pozytywnych (powyżej 3★) i negatywnych (poniżej 3★). Średnią wszystkich opinii z Ceneo pokazuje ikonka „?”.
 - **Raport dla menedżera**: jedno zdanie o odbiorze produktu, zalety i rzeczy do poprawy. Pisze go LLM
-  wyłącznie na podstawie tematów i cytatów z opinii.
+  wyłącznie na podstawie tematów i cytatów z opinii. Gdy nikt niczego nie krytykuje, lista „Co poprawić” jest pusta.
 - **Tematy**: wykres pokazuje, ile opinii chwali (zielone, w prawo) lub krytykuje (pomarańczowe, w lewo) każdy
   temat. Pod wykresem są rozwijane sekcje z cytatami.
 
 **Spróbuj:**
 
-1. Zostań przy kapsułkach wielokrotnego użytku do ekspresów Nespresso (3,0★, 46% opinii negatywnych). Klienci
-   chwalą oszczędność (cena: 31 pochwał), ale najczęstsza skarga to dopasowanie (30 opinii). Rozwiń
-   „Dopasowanie”: „The capsules are too small for the Nespresso machine, it keeps going through the hole”.
-2. Przełącz „Źródło tematów” na **Słownik słów kluczowych**. Według słownika dopasowanie częściej się chwali
-   (14 opinii), niż krytykuje (10). Słownik ocenia wydźwięk zdania po słowach, a zdanie z cytatu powyżej nie ma
-   słów nacechowanych emocjonalnie, więc je pomija. LLM rozumie, że to skarga.
-3. Wybierz minilodówkę BLACK+DECKER (3,5★). Tu dominują skargi na jakość (67 opinii) i dostawę (26).
-4. Wybierz filtry do kawy Melitta (4,6★). To produkt chwalony głównie za cenę (53 opinie).
+1. Zostań przy lodówce Gorenje (10 z 34 opinii, 20% negatywnych). Najwięcej skarg dotyczy jakości (4 opinie).
+   Rozwiń „Jakość”: klienci piszą np. „gwinty na sruby zle spasowane”. Narzekają też na obsługę klienta (2 opinie).
+2. Przełącz „Źródło tematów” na **Słownik słów kluczowych**. Słownik znajduje tu tylko 3 wzmianki o tematach
+   (LLM – 10): pomija zdania, w których nie zna żadnego słowa nacechowanego emocjonalnie.
+3. Wybierz odkurzacz Jigoo C200 (same opinie 5★). W „Co poprawić” jest tylko jedna uwaga, a klienci chwalą
+   głównie cenę.
 
 ## 2. Analiza na żywo
 
 ![Analiza na żywo](img/live.png)
 
-Tu wklejasz link do dowolnego produktu AGD z Amazona. Aplikacja bierze 100 jego najnowszych opinii
-z pobranego zbioru (nie z Amazona) i liczy wszystko od nowa: cztery metody, tematy i raport. Wynik wygląda tak
-samo jak na ekranie Produkt.
+Tu wklejasz link do dowolnego produktu na Ceneo. Aplikacja pobiera stronę produktu i liczy wszystko od nowa
+dla opinii z jej pierwszej strony: cztery metody, tematy i raport. Wynik wygląda tak samo jak na ekranie Produkt.
 
 - Działa tylko przy lokalnym uruchomieniu, z kartą graficzną i Ollamą. W Dockerze ekran wyjaśnia, czego brakuje.
-- Działa dla produktów, które mają opinie w zbiorze (opinie do 2023 roku).
-- Na RTX 5070 analiza trwa około minuty. Pierwsza po dłuższej przerwie trwa do 2 minut, bo Ollama musi
-  wczytać model.
+- Kolejnych stron opinii Ceneo nie udostępnia bez weryfikacji, że jesteś człowiekiem, więc analizujemy tylko
+  pierwszą stronę.
+- Analiza 10 opinii trwa ok. 20 sekund. Pierwsza po dłuższej przerwie jest wolniejsza, bo Ollama musi wczytać model.
 
-**Spróbuj:** wklej przykładowy link spod pola (filtr wody do lodówki Electrolux) i kliknij **Analizuj**.
-Zobaczysz 100 opinii ze średnią 4,1★ i 18% negatywnych. Raport wskaże dopasowanie i cenę jako główne zalety.
+**Spróbuj:** wklej przykładowy link spod pola (Apple iPhone 15 256GB) i kliknij **Analizuj**. Zobaczysz 10 z 50
+opinii ze średnią 4,6★. Raport wskaże jako problem zgodność z opisem i faktury – jeden klient dostał telefon,
+który według rachunku był używany, i nie dostał faktury VAT.
 
 **Ograniczenie LLM:** porównuj zalety z raportu z wykresem tematów. Zdarza się, że model wymienia jako zaletę
 temat, który więcej opinii krytykuje, niż chwali. Raport warto czytać razem z liczbami i cytatami.
@@ -56,26 +55,28 @@ temat, który więcej opinii krytykuje, niż chwali. Raport warto czytać razem 
 
 ![Porównanie metod](img/comparison.png)
 
-Cztery metody oceniają sentyment tych samych 1000 opinii testowych (spoza produktów demo). Prawdą jest ocena
-klienta: 1–2★ to opinia negatywna, 3★ neutralna, 4–5★ pozytywna.
+Cztery metody oceniają sentyment tych samych 1006 opinii z części testowej zbioru Allegro Reviews. Prawdą jest
+ocena klienta: poniżej 3★ to opinia negatywna, 3★ neutralna, powyżej 3★ pozytywna.
 
 | Metoda | Trafność | F1 makro | Czas na 1000 opinii |
 |---|---|---|---|
-| Słownik (VADER) | 80,0% | 0,52 | poniżej 1 s |
-| Klasyczne ML (TF-IDF) | 88,1% | 0,70 | poniżej 1 s |
-| Gotowy model (Hugging Face) | 91,7% | 0,75 | 10 s |
-| LLM | 88,3% | 0,70 | 7 min |
+| Słownik wydźwięku | 49,8% | 0,37 | 2 s |
+| Klasyczne ML (TF-IDF) | 73,2% | 0,63 | poniżej 1 s |
+| Gotowy model (Hugging Face) | 67,4% | 0,59 | 9 s |
+| LLM | 72,0% | 0,64 | 16 min |
 
 **Jak czytać wyniki:**
 
-- Do samego sentymentu wystarczy gotowy model z Hugging Face: jest najlepszy i liczy 1000 opinii w 10 sekund.
-- LLM najlepiej wyłapuje opinie negatywne (F1 0,88), a przy tym jako jedyny podaje tematy i cytaty.
-- Wykres „Które opinie sprawiają kłopot” pokazuje F1 osobno dla każdej klasy. Wszystkie metody najsłabiej
-  radzą sobie z opiniami neutralnymi, których jest tylko 4,7%.
+- Po polsku najlepiej wypada LLM (F1 makro 0,64), ale TF-IDF uczony na polskich opiniach jest prawie tak samo dobry
+  (0,63) i liczy 1000 opinii w niecałą sekundę.
+- Gotowy model z Hugging Face jest wielojęzyczny i nie był uczony na polskich opiniach, dlatego wypada słabiej.
+- LLM najlepiej wyłapuje opinie negatywne (F1 0,84) i jako jedyny podaje tematy i cytaty.
+- Wykres „Które opinie sprawiają kłopot” pokazuje F1 osobno dla każdej klasy. Najtrudniejsze są opinie
+  neutralne (3★): klient pisze o zaletach i wadach naraz.
 - Tabela „Ile kosztowałby LLM przez API” przelicza zużyte tokeny na ceny trzech tanich modeli w chmurze:
-  od 0,23 do 0,93 zł za 1000 opinii.
+  od 0,36 do 1,47 zł za 1000 opinii.
 - Wykres „Tematy: słownik czy LLM?” pokazuje, że LLM znajduje więcej wzmianek o każdym temacie niż słownik,
-  np. o dopasowaniu 304 zamiast 193 na 1000 opinii.
+  np. o jakości 672 zamiast 328 na 1006 opinii.
 
 Na dole ekranu jest wyjaśnienie, dlaczego główną miarą jest F1 makro, a nie trafność.
 
@@ -83,32 +84,31 @@ Na dole ekranu jest wyjaśnienie, dlaczego główną miarą jest F1 makro, a nie
 
 ![Opinie](img/reviews.png)
 
-Opinie testowe z werdyktem każdej metody. Pomyłki (werdykt inny niż ocena klienta) są zaznaczone kolorem.
-Kolumna **Produkt** podaje, czego dotyczy opinia, a ikonka w kolumnie **Link** otwiera stronę produktu na Amazonie.
-Produkt mógł już zniknąć z oferty, bo opinie są do 2023 roku.
+Opinie produktów demo z Ceneo z werdyktem każdej metody. Pomyłki (werdykt inny niż ocena klienta) są zaznaczone
+kolorem. Kolumna **Produkt** podaje, czego dotyczy opinia, a ikonka w kolumnie **Link** otwiera stronę produktu
+na Ceneo.
 
 Przełącznik **Pokaż** filtruje tabelę:
 
-- **Wszystkie**: 1000 opinii,
-- **Metody się nie zgadzają**: 284 opinie, w których co najmniej jedna metoda ma inne zdanie,
-- **Słownik się myli, LLM nie**: 138 opinii.
+- **Wszystkie**: 100 opinii,
+- **Metody się nie zgadzają**: 52 opinie, w których co najmniej jedna metoda ma inne zdanie,
+- **Słownik się myli, LLM nie**: 29 opinii.
 
-**Spróbuj:** kliknij szósty wiersz („What a waste of money!!! Poor quality”, 1★, zamienna grzałka do suszarek Samsung).
-Pod tabelą pojawi się cała opinia i tematy z obu źródeł. Słownik uznał ją za pozytywną, bo klient pisze
-z ironią: „if you like taking your dryer apart every 5 months, this is the perfect item to get”. Słowo „perfect”
-przeważyło. Pozostałe metody poprawnie uznały opinię za negatywną.
+**Spróbuj:** kliknij drugi wiersz („Bardzo dobra jakość wykonania…”, 5★, ekspres De'Longhi). Słownik uznał
+opinię za negatywną, a w tematach zapisał krytykę jakości. Powód: słowo „dobra” sprowadził do rzeczownika „dobro”,
+którego nie ma w słowniku, a „wykonania” do „wykonać”, które ma w słowniku ocenę −2. LLM rozumie sens zdania.
 
 ## Słowniczek
 
 | Pojęcie | Znaczenie |
 |---|---|
 | Sentyment | Wydźwięk opinii: negatywna, neutralna albo pozytywna |
-| Słownik (VADER) | Gotowa lista angielskich słów z przypisanym wydźwiękiem; ocena opinii wynika z jej słów |
-| Słownik słów kluczowych | Listy słów dla każdego tematu (np. „fit”, „compatible” dla dopasowania); tania alternatywa dla LLM |
-| Klasyczne ML (TF-IDF) | Model uczony na 100 000 innych opinii: uczy się, jakie słowa i pary słów pojawiają się przy danej ocenie |
+| Słownik wydźwięku | Lista polskich słów z oceną od −2 do 2 (IPI PAN); ocena opinii to suma ocen jej słów |
+| Słownik słów kluczowych | Listy początków słów dla każdego tematu (np. „dostaw”, „kurier”, „paczk” dla dostawy); tania alternatywa dla LLM |
+| Klasyczne ML (TF-IDF) | Model uczony na 9 577 opiniach z Allegro: uczy się, jakie słowa i pary słów pojawiają się przy danej ocenie |
 | Gotowy model (Hugging Face) | Sieć neuronowa wytrenowana przez kogoś innego na opiniach o produktach, pobierana za darmo |
 | LLM | Duży model językowy; tu działa lokalnie i oprócz sentymentu znajduje tematy i cytaty |
 | Trafność | Jaka część opinii dostała dobrą ocenę |
-| F1 makro | Średnia F1 z trzech klas; każda klasa liczy się tak samo, więc rzadkie opinie neutralne też mają znaczenie |
+| F1 makro | Średnia F1 z trzech klas; każda klasa liczy się tak samo, więc rzadsze opinie neutralne też mają znaczenie |
 | Token | Kawałek tekstu, od którego liczy się cenę w płatnych API LLM |
 | Cytat dosłowny | Cytat z LLM, który rzeczywiście jest w opinii; pozostałe aplikacja pomija |

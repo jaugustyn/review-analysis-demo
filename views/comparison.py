@@ -21,8 +21,8 @@ n = metrics["eval_reviews"]
 right = st.column_config.TextColumn(alignment="right")
 
 st.title("Porównanie metod")
-st.caption(f"Te same {fmt_int(n)} opinii dla każdej metody. Prawdą jest ocena klienta: "
-           "1–2★ to opinia negatywna, 3★ neutralna, 4–5★ pozytywna.")
+st.caption(f"Te same {fmt_int(n)} opinii z publicznego zbioru Allegro Reviews dla każdej metody. Prawdą jest ocena "
+           "klienta: poniżej 3★ to opinia negatywna, 3★ neutralna, powyżej 3★ pozytywna.")
 
 best = max(methods, key=lambda m: methods[m]["f1_macro"])
 best_negative = max(methods, key=lambda m: methods[m]["f1"]["negative"])
@@ -30,7 +30,7 @@ st.markdown(
     f"Najlepiej rozpoznaje sentyment **{METHOD_LABELS[best]}** (F1 makro {fmt_num(methods[best]['f1_macro'])}), "
     f"a opinie negatywne najlepiej wyłapuje **{METHOD_LABELS[best_negative]}** "
     f"(F1 {fmt_num(methods[best_negative]['f1']['negative'])}). "
-    f"Słownik jest najtańszy i najszybszy, ale wyraźnie słabszy (F1 makro {fmt_num(methods['vader']['f1_macro'])})."
+    f"Słownik jest najprostszy, ale wyraźnie słabszy (F1 makro {fmt_num(methods['lexicon']['f1_macro'])})."
 )
 table = pd.DataFrame({
     "Metoda": [METHOD_LABELS[m] for m in methods],
@@ -68,8 +68,8 @@ chart = alt.Chart(per_class).mark_bar(height=12, cornerRadius=3).encode(
 labels = chart.mark_text(align="left", dx=4, fontSize=11).encode(text="Etykieta:N", color=alt.value(INK))
 st.altair_chart((chart + labels).properties(height=320), width="stretch")
 shares = metrics["class_shares"]
-st.caption(f"Opinii neutralnych jest tylko {fmt_pct(shares.get('neutral', 0), 1)}, więc ich wynik jest najmniej pewny. "
-           "Wszystkie metody radzą sobie z nimi najgorzej.")
+st.caption(f"Opinii neutralnych (3★) jest najmniej ({fmt_pct(shares.get('neutral', 0), 1)}) i są najtrudniejsze: "
+           "klient pisze o zaletach i wadach naraz.")
 
 st.subheader("Ile kosztowałby LLM przez API")
 tokens = metrics["llm_tokens_per_1000"]
@@ -94,7 +94,7 @@ counts = pd.DataFrame([
 sources = list(SOURCE_LABELS.values())
 chart = alt.Chart(counts).mark_bar(height=14, cornerRadius=3).encode(
     x=alt.X("Wzmianki:Q", title=f"Wzmianki o temacie w {fmt_int(n)} opiniach", axis=alt.Axis(format="d")),
-    y=alt.Y("Temat:N", sort=list(TOPIC_LABELS.values()), title=None),
+    y=alt.Y("Temat:N", sort=list(TOPIC_LABELS.values()), title=None, axis=alt.Axis(labelLimit=200)),
     yOffset=alt.YOffset("Źródło:N", sort=sources),
     color=alt.Color("Źródło:N", sort=sources, title=None, legend=alt.Legend(orient="top"),
                     scale=alt.Scale(domain=sources, range=[GRAY, TEAL])),

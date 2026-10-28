@@ -14,12 +14,14 @@ dependencies = [
 # Computing the results and the live analysis: a machine with an NVIDIA GPU and Ollama.
 # The app itself (and Docker) needs only the base dependencies.
 analysis = [
+    "beautifulsoup4>=4.15.0",
+    "httpx>=0.28.1",
     "matplotlib>=3.11.2",
     "ollama>=0.6.3",
     "scikit-learn>=1.9.1",
+    "simplemma>=2.0.0",
     "torch>=2.14.1",
     "transformers>=5.20.2",
-    "vadersentiment>=3.3.2",
 ]
 
 [tool.uv]

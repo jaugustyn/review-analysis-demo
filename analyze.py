@@ -1,4 +1,5 @@
-"""Runs the four methods once: on the evaluation set (to compare them) and on the demo products (for the app).
+"""Runs the four methods once: on the Allegro Reviews test split (to compare them) and on the demo products
+from Ceneo (for the app).
 
 Needs an NVIDIA GPU for the transformer model and a running Ollama server with LLM_MODEL from src/config.py.
 Run after prepare_data.py: uv run python analyze.py
@@ -14,17 +15,18 @@ import torch
 from sklearn.metrics import accuracy_score, f1_score
 
 from src.config import (
-    DEMO_INPUT, DEMO_PRODUCT_IDS, DEMO_RESULTS, EVAL_INPUT, EVAL_RESULTS, LLM_MODEL, METRICS_PATH, MODELS_DIR,
-    PRECOMPUTED_DIR, PRODUCTS_RESULTS, TFIDF_PATH, TRAIN_INPUT, TRANSFORMER_MODEL,
+    DEMO_INPUT, DEMO_RESULTS, EVAL_RESULTS, LLM_MODEL, METRICS_PATH, MODELS_DIR, PRECOMPUTED_DIR, PRODUCTS_RESULTS,
+    TFIDF_PATH, TRANSFORMER_MODEL,
 )
-from src.data import SENTIMENTS, product_titles, review_text
+from src.data import SENTIMENTS, load_allegro
 from src.pipeline import LLM_WORKERS, METHODS, run_methods, write_report
 from src.sentiment import train_tfidf
 
-COLUMNS = [
-    "parent_asin", "product_title", "rating", "sentiment", "title", "text", "timestamp",
-    *(f"sent_{method}" for method in METHODS), "topics_keywords", "topics_llm", "llm_input_tokens", "llm_output_tokens",
+RESULT_COLUMNS = [
+    "rating", "sentiment", "text", *(f"sent_{method}" for method in METHODS), "topics_keywords", "topics_llm",
+    "llm_input_tokens", "llm_output_tokens",
 ]
+DEMO_COLUMNS = ["product_id", "product_title", "date", *RESULT_COLUMNS]
 
 
 def show_progress(done: int, total: int) -> None:
@@ -58,16 +60,16 @@ def compare(evaluated: pd.DataFrame, seconds: dict[str, float]) -> dict:
 
 
 def main() -> None:
-    demo, evaluation, train = (pd.read_parquet(path) for path in (DEMO_INPUT, EVAL_INPUT, TRAIN_INPUT))
+    train, evaluation, demo = load_allegro("train"), load_allegro("test"), pd.read_parquet(DEMO_INPUT)
 
-    print(f"Uczę TF-IDF + regresję logistyczną na {len(train)} opiniach...")
+    print(f"Uczę TF-IDF + regresję logistyczną na {len(train)} opiniach z Allegro Reviews...")
     start = time.perf_counter()
-    tfidf = train_tfidf([review_text(a, b) for a, b in zip(train["title"], train["text"])], train["sentiment"].tolist())
+    tfidf = train_tfidf(train["text"].tolist(), train["sentiment"].tolist())
     train_seconds = time.perf_counter() - start
     MODELS_DIR.mkdir(exist_ok=True)
     joblib.dump(tfidf, TFIDF_PATH)
 
-    print(f"Porównanie metod na {len(evaluation)} opiniach...")
+    print(f"Porównanie metod na {len(evaluation)} opiniach z Allegro Reviews...")
     evaluated, seconds = run_methods(evaluation, tfidf, show_progress)
     metrics = {
         "date": date.today().isoformat(),
@@ -80,18 +82,20 @@ def main() -> None:
         **compare(evaluated, seconds),
     }
 
-    print(f"Analiza produktów demo ({len(demo)} opinii)...")
+    print(f"Analiza produktów demo z Ceneo ({len(demo)} opinii)...")
     demo_done, _ = run_methods(demo, tfidf, show_progress)
-    titles = product_titles(DEMO_PRODUCT_IDS)
     products = {}
-    for product_id in DEMO_PRODUCT_IDS:
-        print(f"  Raport: {titles[product_id][:60]}")
-        reviews = demo_done[demo_done["parent_asin"] == product_id]
-        products[product_id] = {"title": titles[product_id], "report": write_report(titles[product_id], reviews)}
+    for product_id, reviews in demo_done.groupby("product_id", sort=False):
+        first = reviews.iloc[0]
+        print(f"  Raport: {first['product_title'][:60]}")
+        products[product_id] = {
+            "title": first["product_title"], "ceneo_rating": first["ceneo_rating"],
+            "ceneo_reviews": int(first["ceneo_reviews"]), "report": write_report(first["product_title"], reviews),
+        }
 
     PRECOMPUTED_DIR.mkdir(exist_ok=True)
-    evaluated[COLUMNS].to_parquet(EVAL_RESULTS, index=False)
-    demo_done[COLUMNS].to_parquet(DEMO_RESULTS, index=False)
+    evaluated[RESULT_COLUMNS].to_parquet(EVAL_RESULTS, index=False)
+    demo_done[DEMO_COLUMNS].to_parquet(DEMO_RESULTS, index=False)
     PRODUCTS_RESULTS.write_text(json.dumps(products, ensure_ascii=False, indent=2), encoding="utf-8")
     METRICS_PATH.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
     print(json.dumps(metrics["methods"], indent=2))

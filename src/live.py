@@ -1,10 +1,10 @@
-"""Live analysis of one product from a pasted Amazon link. Reviews come from the downloaded data set,
-not from Amazon. Works only locally: it needs the analysis libraries, the data, a GPU and Ollama."""
+"""Live analysis of one product from a pasted Ceneo link: the reviews on its page, the four methods and a report.
+Works only locally: it needs the analysis libraries, the downloaded dictionary, a GPU and Ollama."""
 
 from collections.abc import Callable
 from importlib.util import find_spec
 
-from src.config import LIVE_REVIEWS, LLM_MODEL, OLLAMA_URL, REVIEWS_PATH, TFIDF_PATH
+from src.config import LEXICON_PATH, LLM_MODEL, OLLAMA_URL, TFIDF_PATH
 
 
 class LiveError(Exception):
@@ -14,10 +14,10 @@ class LiveError(Exception):
 def unavailable_reason() -> str | None:
     """None when the live analysis can run here, otherwise the reason why not."""
     # Only check that the libraries are installed: importing PyTorch would slow down the first page load.
-    if not all(find_spec(name) for name in ("ollama", "torch", "transformers", "vaderSentiment", "sklearn")):
+    if not all(find_spec(name) for name in ("ollama", "torch", "transformers", "sklearn", "simplemma", "bs4", "httpx")):
         return "brak bibliotek do analizy – uruchom aplikację lokalnie po `uv sync`"
-    if not REVIEWS_PATH.exists() or not TFIDF_PATH.exists():
-        return "brak pobranych opinii lub modelu TF-IDF – uruchom `prepare_data.py` i `analyze.py`"
+    if not LEXICON_PATH.exists() or not TFIDF_PATH.exists():
+        return "brak słownika lub modelu TF-IDF – uruchom `prepare_data.py` i `analyze.py`"
     try:
         import ollama
 
@@ -32,17 +32,22 @@ def unavailable_reason() -> str | None:
 def analyse_link(link: str, on_progress: Callable[[int, int], None]) -> dict:
     import joblib
 
-    from src.data import load_product_reviews, product_id_from_link, product_titles
+    from src.ceneo import CeneoError, fetch_product, product_id_from_link
+    from src.data import sentiment_from_rating
     from src.pipeline import run_methods, write_report
 
     product_id = product_id_from_link(link)
     if not product_id:
-        raise LiveError("Nie rozpoznaję linku. Wklej link do strony produktu na Amazonie (z fragmentem /dp/…).")
-    found = load_product_reviews(product_id, LIVE_REVIEWS)
-    if not found:
-        raise LiveError("Tego produktu nie ma w zbiorze. Analiza działa dla produktów AGD z Amazon Reviews 2023.")
-    product_id, reviews = found
-    title = product_titles([product_id]).get(product_id, product_id)
+        raise LiveError("Nie rozpoznaję linku. Wklej link do strony produktu na Ceneo, np. https://www.ceneo.pl/157145031.")
+    try:
+        product = fetch_product(product_id)
+    except CeneoError as error:
+        raise LiveError(str(error)) from error
+    reviews = product["reviews"]
+    if reviews.empty:
+        raise LiveError("Ten produkt nie ma na Ceneo opinii z treścią.")
+    reviews["sentiment"] = sentiment_from_rating(reviews["rating"])
     analysed, seconds = run_methods(reviews, joblib.load(TFIDF_PATH), on_progress)
-    return {"product_id": product_id, "title": title, "reviews": analysed,
-            "report": write_report(title, analysed), "seconds": sum(seconds.values())}
+    return {"product_id": product_id, "title": product["title"], "reviews": analysed,
+            "ceneo_rating": product["ceneo_rating"], "ceneo_reviews": product["ceneo_reviews"],
+            "report": write_report(product["title"], analysed), "seconds": sum(seconds.values())}

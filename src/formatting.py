@@ -3,7 +3,7 @@
 import re
 
 METHOD_LABELS = {
-    "vader": "Słownik (VADER)",
+    "lexicon": "Słownik wydźwięku",
     "tfidf": "Klasyczne ML (TF-IDF)",
     "transformer": "Gotowy model (Hugging Face)",
     "llm": "LLM",

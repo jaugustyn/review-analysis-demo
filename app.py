@@ -20,5 +20,5 @@ page = st.navigation([
     st.Page("views/reviews.py", title="Opinie", icon=":material/chat:"),
 ])
 with st.sidebar:
-    st.caption("Opinie: Amazon Reviews 2023 (McAuley Lab), kategoria AGD. Cytaty w oryginale, po angielsku.")
+    st.caption("Opinie o produktach: Ceneo.pl. Porównanie metod: zbiór Allegro Reviews.")
 page.run()

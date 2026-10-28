@@ -13,10 +13,9 @@ import numpy as np
 import pandas as pd
 
 from src.config import (
-    API_PRICES, API_PRICES_CHECKED, DEMO_PRODUCT_IDS, EVAL_RESULTS, METRICS_PATH, PRODUCTS_RESULTS, RESULTS_DIR,
+    API_PRICES, API_PRICES_CHECKED, DEMO_RESULTS, EVAL_RESULTS, METRICS_PATH, PRODUCTS_RESULTS, RESULTS_DIR,
     SEED, USD_PLN, USD_PLN_SOURCE,
 )
-from src.data import review_text
 from src.formatting import (
     INK, METHOD_LABELS, NEGATIVE, NEUTRAL, POSITIVE, SENTIMENT_LABELS, SOURCE_LABELS, TEAL, fmt_int, fmt_num,
     fmt_pct, fmt_pln, fmt_seconds,
@@ -93,7 +92,7 @@ def topic_check(evaluated: pd.DataFrame) -> str:
     if not TOPIC_SAMPLE.exists():
         sample = evaluated.sample(SAMPLE_SIZE, random_state=SEED)
         pd.DataFrame({
-            "opinia": [review_text(a, b) for a, b in zip(sample["title"], sample["text"])],
+            "opinia": sample["text"].str.strip(),
             "tematy_slownik": sample["topics_keywords"].map(topics_text),
             "tematy_llm": sample["topics_llm"].map(topics_text),
             "poprawne_slownik": "",
@@ -137,9 +136,10 @@ def main() -> None:
         {"Temat": TOPIC_LABELS[item["topic"]], "Źródło": SOURCE_LABELS[source]}
         for source in SOURCE_LABELS for raw in evaluated[f"topics_{source}"] for item in json.loads(raw)
     ]).value_counts().unstack(fill_value=0).reindex(list(TOPIC_LABELS.values())).reset_index()
-    misses = evaluated[(evaluated["sent_vader"] != evaluated["sentiment"]) & (evaluated["sent_llm"] == evaluated["sentiment"])]
-    misses = misses.assign(content=[review_text(a, b) for a, b in zip(misses["title"], misses["text"])])
-    examples = misses[misses["content"].str.len().between(30, 160)].head(4)
+    misses = evaluated[(evaluated["sent_lexicon"] != evaluated["sentiment"]) & (evaluated["sent_llm"] == evaluated["sentiment"])]
+    misses = misses.assign(content=misses["text"].str.strip())
+    demo = pd.read_parquet(DEMO_RESULTS)
+    examples = misses[misses["content"].str.len().between(5, 300)].head(4)
     shares = metrics["class_shares"]
 
     report = f"""# Wyniki – Głos Klienta
@@ -148,21 +148,25 @@ Wygenerowane przez `report.py` ({date.today():%d.%m.%Y}) z wyników `analyze.py`
 
 ## Dane
 
-- Opinie: Amazon Reviews 2023 (McAuley Lab, https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023),
-  kategoria Appliances (AGD), po angielsku.
-- Porównanie metod: {fmt_int(metrics['eval_reviews'])} losowych opinii spoza produktów demo. Rozkład według gwiazdek:
-  pozytywne {fmt_pct(shares.get('positive', 0), 1)}, negatywne {fmt_pct(shares.get('negative', 0), 1)},
-  neutralne {fmt_pct(shares.get('neutral', 0), 1)}.
-- Prawda: ocena klienta – 1–2★ negatywna, 3★ neutralna, 4–5★ pozytywna.
-- Produkty demo: {len(DEMO_PRODUCT_IDS)} popularnych produktów różnych typów, po 200 najnowszych opinii.
+- Porównanie metod: część testowa zbioru Allegro Reviews (benchmark KLEJ, licencja CC BY-SA 4.0,
+  https://huggingface.co/datasets/allegro/klej-allegro-reviews) – {fmt_int(metrics['eval_reviews'])} polskich opinii
+  z Allegro.pl z oceną 1–5. Rozkład: pozytywne {fmt_pct(shares.get('positive', 0), 1)},
+  negatywne {fmt_pct(shares.get('negative', 0), 1)}, neutralne {fmt_pct(shares.get('neutral', 0), 1)}.
+- Prawda: ocena klienta – poniżej 3★ negatywna, 3★ neutralna, powyżej 3★ pozytywna.
+- Produkty demo: {len(products)} produktów z Ceneo.pl, po pierwszej stronie opinii (zwykle 10, w kolejności
+  wybranej przez Ceneo; kolejnych stron Ceneo nie udostępnia bez weryfikacji, że jest się człowiekiem).
+  Razem {fmt_int(len(demo))} opinii, pozytywne {fmt_pct((demo['sentiment'] == 'positive').mean())}.
 
 ## Metody
 
-1. **Słownik (VADER)** – gotowa lista słów z wydźwiękiem; próg ±0,05 dla oceny całej opinii.
+1. **Słownik wydźwięku** – polski słownik A. Wawera (IPI PAN, https://zil.ipipan.waw.pl/SlownikWydzwieku,
+   3 703 słowa z oceną od −2 do 2). Słowa z opinii sprowadzamy do formy podstawowej (biblioteka simplemma),
+   „nie” odwraca ocenę następnego słowa; suma ocen powyżej zera to opinia pozytywna, poniżej – negatywna.
 2. **Klasyczne ML** – TF-IDF (słowa i pary słów) + regresja logistyczna, uczona na
-   {fmt_int(metrics['tfidf_train_reviews'])} innych opiniach z tej kategorii.
-3. **Gotowy model** – `{metrics['transformer_model']}` z Hugging Face (uczony na opiniach o produktach,
-   wybrany spośród trzech kandydatów).
+   {fmt_int(metrics['tfidf_train_reviews'])} opiniach z części treningowej Allegro Reviews.
+3. **Gotowy model** – `{metrics['transformer_model']}` z Hugging Face (wielojęzyczny, uczony na opiniach
+   o produktach). Polski model Voicelab HerBERT miał na części walidacyjnej Allegro Reviews 96% trafności, ale był najpewniej uczony
+   na Allegro Reviews, więc nie dałoby się go uczciwie porównać.
 4. **LLM** – `{metrics['llm_model']}` lokalnie przez Ollamę; dla każdej opinii zwraca sentyment, tematy i cytaty.
 
 ## Porównanie na {fmt_int(metrics['eval_reviews'])} opiniach (wykresy: `f1_by_class.png`, `quality_vs_time.png`)
@@ -194,18 +198,19 @@ Cytaty LLM dosłownie obecne w opinii: {fmt_pct(metrics['llm_quotes_verbatim'])}
 
 ## Przykłady, w których słownik się myli, a LLM nie
 
-{chr(10).join(f'- „{row.content}” ({row.rating}★) – słownik: {SENTIMENT_LABELS[row.sent_vader]}, LLM: {SENTIMENT_LABELS[row.sent_llm]}' for row in examples.itertuples())}
+{chr(10).join(f'- „{row.content}” ({row.rating:g}★) – słownik: {SENTIMENT_LABELS[row.sent_lexicon]}, LLM: {SENTIMENT_LABELS[row.sent_llm]}' for row in examples.itertuples())}
 
 ## Produkty demo
 
-{chr(10).join(f'- **{p["title"][:80]}** – {p["report"]["summary"]}' for p in products.values())}
+{chr(10).join(f'- **{p["title"][:80]}** ({p["ceneo_reviews"]} opinii na Ceneo) – {p["report"]["summary"]}' for p in products.values())}
 
 ## Zastrzeżenia
 
-- Opinii neutralnych jest mało ({fmt_pct(shares.get('neutral', 0), 1)}), więc wyniki dla tej klasy są niepewne.
+- Produkty demo mają tylko po ok. 10 opinii z pierwszej strony Ceneo, w większości pozytywnych – liczby
+  w tematach są małe, a raport opiera się na kilku opiniach.
 - Ocena w gwiazdkach nie zawsze zgadza się z treścią opinii, więc część „błędów” metod to w rzeczywistości
   niespójność klienta.
-- Gotowy model z Hugging Face był uczony na opiniach o produktach – nie wiemy, czy nie było wśród nich opinii z Amazona.
+- Słownik wydźwięku nie ma podanej licencji, dlatego pobieramy go przy przygotowaniu danych i nie trzymamy w repozytorium.
 """
     (RESULTS_DIR / "summary.md").write_text(report, encoding="utf-8")
     print(report)
