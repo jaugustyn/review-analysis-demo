@@ -1,11 +1,11 @@
 {
-  "date": "2026-10-25",
+  "date": "2026-10-28",
   "gpu": "NVIDIA GeForce RTX 5070",
   "llm_model": "gemma4:12b",
   "llm_workers": 4,
   "transformer_model": "nlptown/bert-base-multilingual-uncased-sentiment",
   "tfidf_train_reviews": 100000,
-  "tfidf_train_seconds": 8.522001100005582,
+  "tfidf_train_seconds": 7.041222699917853,
   "eval_reviews": 1000,
   "class_shares": {
     "positive": 0.803,
@@ -21,17 +21,17 @@
         "neutral": 0.049586776859504134,
         "positive": 0.890840652446675
       },
-      "seconds_per_1000": 0.1137690000468865
+      "seconds_per_1000": 0.10674029996152967
     },
     "tfidf": {
-      "accuracy": 0.881,
-      "f1_macro": 0.6958737173722825,
+      "accuracy": 0.884,
+      "f1_macro": 0.7001135903050201,
       "f1": {
-        "negative": 0.8025078369905956,
-        "neutral": 0.34074074074074073,
-        "positive": 0.944372574385511
+        "negative": 0.8113207547169812,
+        "neutral": 0.34328358208955223,
+        "positive": 0.9457364341085271
       },
-      "seconds_per_1000": 0.024270999943837523
+      "seconds_per_1000": 0.024455100065097213
     },
     "transformer": {
       "accuracy": 0.917,
@@ -41,23 +41,23 @@
         "neutral": 0.4485981308411215,
         "positive": 0.9637173774665818
       },
-      "seconds_per_1000": 10.257550900045317
+      "seconds_per_1000": 9.034548099967651
     },
     "llm": {
-      "accuracy": 0.883,
-      "f1_macro": 0.6977028145657836,
+      "accuracy": 0.881,
+      "f1_macro": 0.6960226205046206,
       "f1": {
         "negative": 0.8780487804878049,
-        "neutral": 0.272108843537415,
-        "positive": 0.9429508196721311
+        "neutral": 0.2684563758389262,
+        "positive": 0.9415627051871307
       },
-      "seconds_per_1000": 426.8663019000087
+      "seconds_per_1000": 553.9072776000248
     }
   },
-  "keywords_seconds_per_1000": 0.06633700005477294,
+  "keywords_seconds_per_1000": 0.06295119994319975,
   "llm_tokens_per_1000": {
-    "input": 290816,
-    "output": 60220
+    "input": 290792,
+    "output": 60656
   },
-  "llm_quotes_verbatim": 0.9837940896091516
+  "llm_quotes_verbatim": 0.98005698005698
 }

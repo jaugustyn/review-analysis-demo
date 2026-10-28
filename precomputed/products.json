@@ -2,18 +2,18 @@
   "B01CBWDY0C": {
     "title": "Nespresso Capsules Refillable - Reusable Coffee Pods For Nespresso Cups - OriginalLine Compatible - Pack of 6",
     "report": {
-      "summary": "Produkt ma mieszany odbiór, w którym głównym atutem jest oszczędność pieniędzy, natomiast poważnym problemem jest niedopasowanie wielkości kapsułek do maszyn.",
+      "summary": "Produkt ma mieszany odbiór, w którym głównym atutem jest niska cena, natomiast poważnym problemem jest niedopasowanie wielkości kapsułek do maszyn.",
       "strengths": [
-        "Klienci doceniają produkt za znaczną oszczędność kosztów w porównaniu do kupowania oryginalnych kapsułek.",
-        "Część użytkowników potwierdza, że kapsułki dobrze pasują do konkretnych modeli maszyn, takich jak Nespresso Citiz czy Essenza Krups."
+        "Klienci doceniają produkt za możliwość oszczędności pieniędzy.",
+        "Część użytkowników potwierdza, że kapsułki dobrze pasują do konkretnych modeli maszyn, takich jak Nespresso Citiz czy Cuisinart."
       ],
       "improvements": [
-        "Należy poprawić wielkość kapsułek, ponieważ duża grupa klientów zgłasza, że są one zbyt małe i nie pasują do maszyn Nespresso.",
-        "Konieczna jest poprawa jakości wykonania, aby uniknąć pękania pokrywek oraz uszkadzania maszyn przez elementy produktu.",
-        "Należy usprawnić obsługę klienta oraz proces zwrotów, aby uniknąć negatywnych doświadczeń związanych z polityką zwrotów i brakiem kontaktu."
+        "Należy poprawić wymiary kapsułek, ponieważ duża liczba klientów zgłasza, że są one zbyt małe do maszyn Nespresso.",
+        "Konieczna jest poprawa jakości wykonania, aby uniknąć uszkodzeń maszyn oraz łamania się pokrywek.",
+        "Należy usprawnić obsługę klienta i proces zwrotów, aby uniknąć negatywnych doświadczeń związanych z polityką 30-dniową."
       ],
-      "input_tokens": 799,
-      "output_tokens": 254
+      "input_tokens": 794,
+      "output_tokens": 231
     }
   },
   "B0C69HCVRM": {
@@ -21,124 +21,124 @@
     "report": {
       "summary": "Produkt ma mieszany odbiór, w którym pozytywnie oceniane są wymiary i cena, natomiast poważnym problemem jest niska niezawodność oraz trudności z obsługą klienta.",
       "strengths": [
-        "Produkt posiada idealne wymiary i dobrze dopasowuje się do przestrzeni biurowych lub pojazdów.",
-        "Klienci doceniają korzystną relację ceny do jakości oraz atrakcyjne promocje.",
+        "Produkt posiada idealne wymiary i dobrze dopasowuje się do małych przestrzeni, takich jak biura czy kabiny ciężarówek.",
+        "Klienci doceniają korzystną relację ceny do jakości, uznając zakup za opłacalny.",
         "Dostawy są często realizowane szybko i w dobrym stanie opakowania."
       ],
       "improvements": [
-        "Należy poprawić jakość wykonania i niezawodność urządzenia, ponieważ duża liczba opinii wskazuje na awarie i wycieki.",
-        "Konieczna jest optymalizacja procesu obsługi klienta i ułatwienie procedur zwrotów oraz reklamacji.",
-        "Należy poprawić standardy kontroli jakości przed wysyłką, aby uniknąć dostarczania uszkodzonych produktów lub produktów z brakującymi elementami."
+        "Należy poprawić jakość wykonania i niezawodność urządzenia, ponieważ duża liczba opinii wskazuje na usterki techniczne i awarie.",
+        "Konieczna jest optymalizacja procesu obsługi klienta oraz procedur zwrotów i reklamacji.",
+        "Należy rozwiązać problemy z uszkodzeniami produktów podczas transportu oraz brakiem części w zestawie."
       ],
-      "input_tokens": 903,
-      "output_tokens": 241
+      "input_tokens": 890,
+      "output_tokens": 236
     }
   },
   "B002UYSHMM": {
     "title": "Haier HLP21N Pulsator 1-Cubic-Foot Portable Washer",
     "report": {
-      "summary": "Produkt cieszy się ogólnie pozytywnym odbiorem, głównie dzięki dobremu stosunkowi jakości do ceny oraz dopasowaniu do małych przestrzeni, choć klienci zgłaszają problemy z trwałością i obsługą serwisową.",
+      "summary": "Produkt cieszy się ogólnie pozytywnym odbiorem, głównie dzięki dobremu stosunkowi jakości do ceny oraz dopasowaniu do małych przestrzeni.",
       "strengths": [
-        "Produkt jest oceniany jako bardzo dobry wybór pod względem ceny i wartości dla osób posiadających małe mieszkania lub kampery.",
-        "Urządzenie jest chwalone za idealne dopasowanie do małych przestrzeni i łazienek.",
-        "Wielu użytkowników potwierdza wysoką trwałość urządzenia, deklarując bezproblemową pracę przez okres od 2 do 4 lat."
+        "Produkt jest oceniany jako bardzo opłacalny i oferujący dobrą wartość w stosunku do ceny.",
+        "Urządzenie idealnie sprawdza się w małych mieszkaniach i kamperach dzięki swoim wymiarom.",
+        "Wielu użytkowników chwali trwałość urządzenia, potwierdzając jego bezawaryjną pracę przez kilka lat."
       ],
       "improvements": [
-        "Należy poprawić jakość wykonania i trwałość, ponieważ znaczna liczba opinii wskazuje na awarie w ciągu pierwszego roku użytkowania.",
-        "Konieczna jest poprawa standardów dostawy, aby uniknąć uszkodzeń mechanicznych (wgnieceń) przesyłek podczas transportu.",
-        "Należy usprawnić obsługę klienta i proces reklamacyjny, szczególnie w zakresie dostępności części zamiennych oraz realizacji gwarancji."
+        "Należy poprawić proces dostawy, aby uniknąć uszkodzeń mechanicznych opakowań i produktów podczas transportu.",
+        "Konieczna jest poprawa obsługi klienta, szczególnie w zakresie procesów reklamacyjnych i wysyłki odpowiednich części zamiennych.",
+        "Należy zweryfikować kompatybilność akcesoriów (np. wężyków i adapterów) z różnymi typami baterii łazienkowych."
       ],
-      "input_tokens": 972,
-      "output_tokens": 271
+      "input_tokens": 943,
+      "output_tokens": 241
     }
   },
   "B08FDBWTDB": {
     "title": "BLACK+DECKER BCD6W Compact Countertop Dishwasher, 6 Place Settings, White",
     "report": {
-      "summary": "Produkt ma mieszany odbiór, przy czym klienci doceniają jego wymiary i stosunek jakości do ceny, ale zgłaszają poważne problemy z trwałością oraz obsługą posprzedową.",
+      "summary": "Produkt ma mieszany odbiór, w którym pozytywnie oceniane są wymiary i cena, jednak poważne problemy z jakością oraz obsługą klienta znacząco obniżają ogólną satysfakcję.",
       "strengths": [
-        "Urządzenie jest chwalone za dopasowanie do ograniczonych przestrzeni kuchennych i łatwość instalacji.",
-        "Klienci uważają produkt za opłacalną inwestycję, która jest warta swojej ceny.",
-        "Dostawa jest oceniana pozytywnie pod kątem szybkości i zabezpieczenia przesyłki."
+        "Produkt idealnie dopasowuje się do małych kuchni i gospodarstw domowych, co jest wysoko oceniane przez klientów.",
+        "Użytkownicy uważają, że urządzenie jest warte swojej ceny i stanowi dobrą inwestycję.",
+        "Proces zwrotów i wymiany w niektórych przypadkach przebiegał szybko i bezproblemowo."
       ],
       "improvements": [
-        "Należy poprawić jakość wykonania i trwałość urządzenia, ponieważ duża liczba opinii wskazuje na usterki techniczne i uszkodzenia.",
-        "Konieczna jest poprawa standardów obsługi klienta oraz dostępności części zamiennych.",
-        "Należy zweryfikować proces pakowania, aby uniknąć dostarczania produktów uszkodzonych lub pogniecionych."
+        "Należy poprawić jakość wykonania, ponieważ duża liczba opinii wskazuje na usterki techniczne, wycieki oraz uszkodzenia fabryczne.",
+        "Konieczna jest poprawa standardów obsługi klienta oraz zapewnienie dostępności części zamiennych.",
+        "Należy usprawnić proces zabezpieczania przesyłek, aby uniknąć dostarczania uszkodzonych lub wgniecionych produktów."
       ],
-      "input_tokens": 1043,
-      "output_tokens": 239
+      "input_tokens": 991,
+      "output_tokens": 255
     }
   },
   "B08YBGCNHP": {
     "title": "SAMSUNG Genuine Filters for Refrigerator Water and Ice, Carbon Block Filtration for Clean, Clear Drinking Water, DA29-00020B-3P, 3 Pack",
     "report": {
-      "summary": "Produkt ma mieszany odbiór, w którym pozytywnie oceniana jest cena i dopasowanie, jednak istotnym problemem jest jakość wykonania oraz trudności z procesem zwrotów.",
+      "summary": "Produkt ma mieszany odbiór, w którym pozytywnie oceniana cena i dopasowanie są równoważone przez istotne problemy z jakością oraz błędami w opisie kompatybilności.",
       "strengths": [
         "Klienci doceniają atrakcyjną cenę produktu w porównaniu do zakupów w sklepach stacjonarnych.",
-        "Produkt jest chwalony za idealne dopasowanie do lodówek marki Samsung.",
-        "Dostawy są oceniane jako szybkie i terminowe."
+        "Produkt jest chwalony za idealne dopasowanie do lodówek Samsung w wielu przypadkach.",
+        "Dostawa jest oceniana jako szybka i terminowa przez część użytkowników."
       ],
       "improvements": [
-        "Należy poprawić jakość filtrów, ponieważ klienci zgłaszają wycieki oraz zanieczyszczenie wody cząstkami przypominającymi algi.",
-        "Konieczna jest weryfikacja opisu kompatybilności, aby uniknąć sytuacji, w których produkt nie pasuje do modelu lodówki podanego w specyfikacji.",
-        "Należy uprościć proces reklamacji i zwrotów, który jest obecnie oceniany jako skomplikowany i mało intuicyjny."
+        "Należy poprawić jakość produktu, aby wyeliminować problemy z wyciekami oraz zanieczyszczeniem wody.",
+        "Konieczna jest weryfikacja opisu kompatybilności, ponieważ wielu klientów otrzymało filtry, które nie pasowały do ich modeli lodówek.",
+        "Należy uprościć proces zwrotów i wymiany produktów na właściwe rozmiary."
       ],
-      "input_tokens": 892,
-      "output_tokens": 250
+      "input_tokens": 866,
+      "output_tokens": 236
     }
   },
   "B002Y2S536": {
     "title": "BOSCH / Cuno 9000 077104 UltraClarity REPLFLTR10 Refrigerator Water Filter",
     "report": {
-      "summary": "Produkt ma mieszany odbiór, w którym pozytywnie oceniane są głównie dopasowanie i cena, natomiast istotnym problemem jest niska jakość niektórych egzemplarzy oraz trudności z procesem zwrotów.",
+      "summary": "Produkt ma mieszany odbiór, w którym pozytywnie oceniane są głównie dopasowanie i cena, natomiast istotnym problemem jest wysoki odsetek wadliwych egzemplarzy.",
       "strengths": [
-        "Produkt jest chwalony za idealne dopasowanie do lodówek Bosch w 46 opiniach.",
-        "Klienci doceniają atrakcyjną cenę produktu w 30 opiniach.",
-        "Dostawa jest oceniana pozytywnie w 16 opiniach, głównie ze względu na szybkość i odpowiednie zabezpieczenie przesyłki."
+        "Klienci doceniają idealne dopasowanie filtra do lodówek marki Bosch.",
+        "Produkt jest chwalony za atrakcyjną cenę i dobry stosunek jakości do kosztów.",
+        "Dostawy są zazwyczaj szybkie i bezpieczne."
       ],
       "improvements": [
-        "Należy poprawić kontrolę jakości, ponieważ aż 44 opinie krytykują wadliwe filtry, wycieki lub problemy z działaniem kostkarki.",
-        "Konieczna jest optymalizacja procesu obsługi zwrotów, gdyż 14 opinii krytykuje zamknięte okna zwrotów i opóźnienia w wysyłce etykiet.",
-        "Należy zweryfikować autentyczność produktu, ponieważ klienci zgłaszają wątpliwości dotyczące jakości wydruku na opakowaniu w porównaniu do oryginałów."
+        "Należy poprawić kontrolę jakości, ponieważ duża liczba opinii wskazuje na wadliwe filtry, nieszczelności i problemy z działaniem kostkarki.",
+        "Konieczna jest optymalizacja procesu obsługi zwrotów, aby uniknąć negatywnych opinii dotyczących upływu terminów i opóźnień w wysyłce etykiet.",
+        "Warto zweryfikować autentyczność opakowań, gdyż klienci zauważają różnice w jakości druku w porównaniu do oryginalnych produktów Bosch."
       ],
-      "input_tokens": 823,
-      "output_tokens": 286
+      "input_tokens": 834,
+      "output_tokens": 254
     }
   },
   "B0BMPQXGMG": {
     "title": "LG 4681EA2001T Genuine OEM Drain Pump Assembly for LG Washing Machines",
     "report": {
-      "summary": "Produkt cieszy się ogólnie pozytywnym odbiorem, głównie dzięki wysokiej kompatybilności z urządzeniami LG oraz korzystnej cenie.",
+      "summary": "Produkt cieszy się ogólnie pozytywnym odbiorem, głównie dzięki wysokiej kompatybilności z urządzeniami LG oraz korzystnej relacji jakości do ceny.",
       "strengths": [
-        "Produkt jest chwalony za idealne dopasowanie do modeli pralek LG jako oryginalny element OEM.",
-        "Klienci doceniają atrakcyjną cenę, która pozwala na oszczędność w porównaniu do zakupu nowej pralki.",
-        "Dostawa jest oceniana pozytywnie ze względu na jej szybkość i bezpieczeństwo opakowania."
+        "Produkt jest chwalony za idealne dopasowanie do modeli pralek LG.",
+        "Klienci doceniają atrakcyjną cenę, która pozwala na oszczędność w porównaniu do zakupu nowego urządzenia.",
+        "Dostawa jest oceniana jako szybka i terminowa."
       ],
       "improvements": [
-        "Należy poprawić trwałość mechanizmu, ponieważ część opinii wskazuje na pękanie łopatek wirnika po około roku użytkowania.",
-        "Warto rozważyć ulepszenie polityki gwarancyjnej, gdyż klienci krytykują brak wsparcia w przypadku awarii części."
+        "Należy poprawić trwałość produktu, ponieważ część opinii wskazuje na awarie mechaniczne (np. pękanie łopatek) po krótkim czasie użytkowania.",
+        "Warto rozważyć ulepszenie polityki gwarancyjnej, gdyż klienci krytykują brak wsparcia w przypadku usterki."
       ],
-      "input_tokens": 929,
-      "output_tokens": 212
+      "input_tokens": 938,
+      "output_tokens": 205
     }
   },
   "B07JMNYK7X": {
     "title": "De'Longhi Stainless Steel Milk Frothing Pitcher, 12 ounce (350 ml), Barista Tool, Frother Jug for Espresso Machine Coffee Cappuccino Latte Art, DLSC0, 12 oz",
     "report": {
-      "summary": "Produkt cieszy się ogólnie pozytywnym odbiorem, głównie dzięki wysokiej jakości wykonania i dopasowaniu do konkretnych modeli ekspresów.",
+      "summary": "Produkt jest ogólnie dobrze oceniany, głównie ze względu na wysoką jakość wykonania i odpowiedni rozmiar dla konkretnych modeli ekspresów, choć klienci zwracają uwagę na wysoką cenę oraz sporadyczne problemy z jakością dostawy.",
       "strengths": [
-        "Klienci wysoko oceniają jakość wykonania produktu, określając go jako solidny i trwałej klasy.",
-        "Produkt jest chwalony za idealne dopasowanie do konkretnych modeli maszyn do kawy.",
-        "Użytkownicy doceniają wartość produktu, uznając, że jakość uzasadnia poniesiony koszt."
+        "Klienci wysoko oceniają jakość wykonania produktu, podkreślając jego trwałość i materiały.",
+        "Produkt jest chwalony za idealne dopasowanie do konkretnych modeli ekspresów do kawy.",
+        "Użytkownicy doceniają wartość produktu, uznając, że jakość uzasadnia poniesione koszty."
       ],
       "improvements": [
-        "Należy poprawić kontrolę jakości dostaw, ponieważ klienci zgłaszają otrzymywanie produktów używanych lub uszkodzonych.",
-        "Warto rozważyć optymalizację ceny, gdyż część klientów uważa produkt za znacznie droższy od konkurencyjnych rozwiązań.",
-        "Należy wyeliminować problemy z wielkością produktu, gdyż dla części użytkowników jest on zbyt mały."
+        "Należy poprawić proces kontroli jakości dostaw, aby uniknąć wysyłania produktów używanych lub uszkodzonych.",
+        "Warto rozważyć optymalizację ceny, ponieważ klienci często porównują produkt do znacznie tańszych zamienników.",
+        "Należy wyeliminować błędy produkcyjne, takie jak rdza, wycieki lub niskiej jakości nadruki logo."
       ],
-      "input_tokens": 857,
-      "output_tokens": 229
+      "input_tokens": 869,
+      "output_tokens": 255
     }
   },
   "B01251BJX8": {
@@ -147,33 +147,33 @@
       "summary": "Produkt cieszy się ogólnie pozytywnym odbiorem, głównie dzięki dobremu dopasowaniu do ekspresów oraz korzystnej cenie.",
       "strengths": [
         "Produkt bardzo dobrze pasuje do ekspresów kawowych Krups.",
-        "Klienci doceniają korzystną cenę i oszczędność w porównaniu do filtrów papierowych.",
+        "Cena jest oceniana jako atrakcyjna i opłacalna w porównaniu do filtrów papierowych.",
         "Dostawa jest szybka i towar dociera w dobrym stanie."
       ],
       "improvements": [
-        "Należy poprawić jakość wykonania, ponieważ część klientów zgłasza problemy z wytrzymałością uchwytów i siatki.",
-        "Konieczna jest weryfikacja dokładności opisów rozmiarów, aby uniknąć wysyłki filtrów niepasujących do konkretnych modeli.",
+        "Należy poprawić jakość wykonania, ponieważ klienci zgłaszają problemy z wytrzymałością uchwytów i siatki.",
+        "Konieczna jest weryfikacja zgodności rozmiarów, gdyż część klientów otrzymała filtry niepasujące do konkretnych modeli maszyn.",
         "Należy poprawić standardy obsługi klienta, szczególnie w zakresie komunikacji i procesu zwrotów."
       ],
-      "input_tokens": 785,
-      "output_tokens": 216
+      "input_tokens": 782,
+      "output_tokens": 212
     }
   },
   "B00WA6TGDE": {
     "title": "Melitta Cone Coffee Filters, Natural Brown #4, 100 Count (Pack Of 3)",
     "report": {
-      "summary": "Produkt cieszy się ogólnie pozytywnym odbiorem, głównie dzięki wysokiej jakości wykonania i korzystnej cenie.",
+      "summary": "Produkt cieszy się ogólnie bardzo pozytywnym odbiorem, głównie dzięki wysokiej jakości filtrów i korzystnej cenie.",
       "strengths": [
-        "Klienci doceniają wysoką jakość filtrów, które zachowują kształt i są solidniejsze od marek konkurencyjnych.",
-        "Produkt jest oceniany jako dobry wybór pod względem ceny, szczególnie przy zakupie pakietu trzech opakowań.",
-        "Filtry są chwalone za idealne dopasowanie do wielu modeli ekspresów do kawy."
+        "Klienci chwalą wysoką jakość filtrów, które zachowują kształt i zapobiegają przedostawaniu się fusów do kawy.",
+        "Produkt jest oceniany jako dobry wybór pod względem ceny, szczególnie przy zakupie zestawu trzech opakowań.",
+        "Filtry dobrze dopasowują się do popularnych ekspresów do kawy, takich jak Cuisinart czy Moccamaster."
       ],
       "improvements": [
-        "Należy poprawić kontrolę jakości, aby wyeliminować filtry z uszkodzonymi lub nieszczelnymi dolnymi krawędziami.",
-        "Wymagana jest weryfikacja zgodności liczby sztuk w opakowaniu z opisem, aby uniknąć reklamacji dotyczących ilości produktów."
+        "Należy poprawić kontrolę jakości, ponieważ część filtrów jest zbyt cienka, nieszczelna lub ulega rozdarciu na dnie.",
+        "Wymaga poprawy proces logistyczny w zakresie rzetelności dostaw, aby uniknąć sytuacji, w których zamówienia są oznaczane jako dostarczone mimo braku odbioru."
       ],
-      "input_tokens": 746,
-      "output_tokens": 211
+      "input_tokens": 748,
+      "output_tokens": 232
     }
   }
 }

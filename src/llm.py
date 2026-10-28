@@ -6,6 +6,7 @@ against the review text, because a model can "quote" words that the customer nev
 
 import json
 import re
+import time
 from dataclasses import dataclass
 from functools import cache
 
@@ -94,10 +95,16 @@ def _client():
 
 
 def _chat(prompt: str, schema: dict, model: str) -> LLMCall:
-    response = _client().chat(
-        model=model, messages=[{"role": "user", "content": prompt}], format=schema,
-        options={"temperature": 0}, think=False,
-    )
+    import ollama
+
+    request = {"model": model, "messages": [{"role": "user", "content": prompt}], "format": schema,
+               "options": {"temperature": 0}, "think": False}
+    try:
+        response = _client().chat(**request)
+    except ollama.ResponseError:
+        # Starting the model on the GPU occasionally fails the first time (a CUDA error); the next try works.
+        time.sleep(5)
+        response = _client().chat(**request)
     return LLMCall(
         result=json.loads(response.message.content),
         input_tokens=response.prompt_eval_count or 0,
