@@ -10,7 +10,7 @@ import time
 from dataclasses import dataclass
 from functools import cache
 
-from src.config import LLM_MODEL, OLLAMA_URL
+from src.config import API_PRICES, LLM_MODEL, OLLAMA_URL, USD_PLN
 from src.topics import TOPIC_LABELS
 
 REVIEW_SCHEMA = {
@@ -142,3 +142,10 @@ def analyse_review(text: str, model: str = LLM_MODEL) -> LLMCall:
 
 def product_report(title: str, n_reviews: int, evidence: str, model: str = LLM_MODEL) -> LLMCall:
     return _chat(REPORT_PROMPT.format(title=title, n_reviews=n_reviews, evidence=evidence), REPORT_SCHEMA, model)
+
+
+def api_costs(tokens: dict) -> list[dict]:
+    """What the LLM part would cost in zł through each API in API_PRICES, for the given tokens
+    ({"input", "output"}, counted by the local model): [{"model", "pln", "source", "input", "output"}]."""
+    return [{**price, "pln": (tokens["input"] * price["input"] + tokens["output"] * price["output"]) / 1e6 * USD_PLN}
+            for price in API_PRICES]

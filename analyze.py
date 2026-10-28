@@ -6,7 +6,6 @@ Run after prepare_data.py: uv run python analyze.py
 """
 
 import json
-import time
 from datetime import date
 
 import joblib
@@ -50,7 +49,6 @@ def compare(evaluated: pd.DataFrame, seconds: dict[str, float]) -> dict:
             }
             for method in METHODS
         },
-        "keywords_seconds_per_1000": seconds["keywords"] / n * 1000,
         "llm_tokens_per_1000": {
             "input": int(evaluated["llm_input_tokens"].sum() / n * 1000),
             "output": int(evaluated["llm_output_tokens"].sum() / n * 1000),
@@ -63,9 +61,7 @@ def main() -> None:
     train, evaluation, demo = load_allegro("train"), load_allegro("test"), pd.read_parquet(DEMO_INPUT)
 
     print(f"Uczę TF-IDF + regresję logistyczną na {len(train)} opiniach z Allegro Reviews...")
-    start = time.perf_counter()
     tfidf = train_tfidf(train["text"].tolist(), train["sentiment"].tolist())
-    train_seconds = time.perf_counter() - start
     MODELS_DIR.mkdir(exist_ok=True)
     joblib.dump(tfidf, TFIDF_PATH)
 
@@ -78,7 +74,6 @@ def main() -> None:
         "llm_workers": LLM_WORKERS,
         "transformer_model": TRANSFORMER_MODEL,
         "tfidf_train_reviews": len(train),
-        "tfidf_train_seconds": train_seconds,
         **compare(evaluated, seconds),
     }
 

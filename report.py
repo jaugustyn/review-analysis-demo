@@ -13,13 +13,13 @@ import numpy as np
 import pandas as pd
 
 from src.config import (
-    API_PRICES, API_PRICES_CHECKED, DEMO_RESULTS, EVAL_RESULTS, METRICS_PATH, PRODUCTS_RESULTS, RESULTS_DIR,
-    SEED, USD_PLN, USD_PLN_SOURCE,
+    API_PRICES_CHECKED, DEMO_RESULTS, EVAL_RESULTS, METRICS_PATH, PRODUCTS_RESULTS, RESULTS_DIR, SEED, USD_PLN_SOURCE,
 )
 from src.formatting import (
     INK, METHOD_LABELS, NEGATIVE, NEUTRAL, POSITIVE, SENTIMENT_LABELS, SOURCE_LABELS, TEAL, fmt_int, fmt_num,
     fmt_pct, fmt_pln, fmt_seconds,
 )
+from src.llm import api_costs
 from src.topics import TOPIC_LABELS
 
 TOPIC_SAMPLE = RESULTS_DIR / "topic_review_sample.csv"
@@ -92,7 +92,7 @@ def topic_check(evaluated: pd.DataFrame) -> str:
     if not TOPIC_SAMPLE.exists():
         sample = evaluated.sample(SAMPLE_SIZE, random_state=SEED)
         pd.DataFrame({
-            "opinia": sample["text"].str.strip(),
+            "opinia": sample["text"],
             "tematy_slownik": sample["topics_keywords"].map(topics_text),
             "tematy_llm": sample["topics_llm"].map(topics_text),
             "poprawne_slownik": "",
@@ -127,19 +127,18 @@ def main() -> None:
     })
     tokens = metrics["llm_tokens_per_1000"]
     api = pd.DataFrame([{
-        "Model": p["model"],
-        "Cena USD za 1 mln tokenów (wejście / wyjście)": f"{fmt_num(p['input'])} / {fmt_num(p['output'])}",
-        "Koszt na 1000 opinii": fmt_pln((tokens["input"] * p["input"] + tokens["output"] * p["output"]) / 1e6 * USD_PLN),
-        "Źródło": p["source"],
-    } for p in API_PRICES])
+        "Model": c["model"],
+        "Cena USD za 1 mln tokenów (wejście / wyjście)": f"{fmt_num(c['input'])} / {fmt_num(c['output'])}",
+        "Koszt na 1000 opinii": fmt_pln(c["pln"]),
+        "Źródło": c["source"],
+    } for c in api_costs(tokens)])
     mentions = pd.DataFrame([
         {"Temat": TOPIC_LABELS[item["topic"]], "Źródło": SOURCE_LABELS[source]}
         for source in SOURCE_LABELS for raw in evaluated[f"topics_{source}"] for item in json.loads(raw)
     ]).value_counts().unstack(fill_value=0).reindex(list(TOPIC_LABELS.values())).reset_index()
     misses = evaluated[(evaluated["sent_lexicon"] != evaluated["sentiment"]) & (evaluated["sent_llm"] == evaluated["sentiment"])]
-    misses = misses.assign(content=misses["text"].str.strip())
+    examples = misses[misses["text"].str.len().between(5, 300)].head(4)
     demo = pd.read_parquet(DEMO_RESULTS)
-    examples = misses[misses["content"].str.len().between(5, 300)].head(4)
     shares = metrics["class_shares"]
 
     report = f"""# Wyniki – Głos Klienta
@@ -198,7 +197,7 @@ Cytaty LLM dosłownie obecne w opinii: {fmt_pct(metrics['llm_quotes_verbatim'])}
 
 ## Przykłady, w których słownik się myli, a LLM nie
 
-{chr(10).join(f'- „{row.content}” ({row.rating:g}★) – słownik: {SENTIMENT_LABELS[row.sent_lexicon]}, LLM: {SENTIMENT_LABELS[row.sent_llm]}' for row in examples.itertuples())}
+{chr(10).join(f'- „{row.text}” ({row.rating:g}★) – słownik: {SENTIMENT_LABELS[row.sent_lexicon]}, LLM: {SENTIMENT_LABELS[row.sent_llm]}' for row in examples.itertuples())}
 
 ## Produkty demo
 

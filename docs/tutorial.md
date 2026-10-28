@@ -42,7 +42,7 @@ dla opinii z jej pierwszej strony: cztery metody, tematy i raport. Wynik wygląd
 - Działa tylko przy lokalnym uruchomieniu, z kartą graficzną i Ollamą. W Dockerze ekran wyjaśnia, czego brakuje.
 - Kolejnych stron opinii Ceneo nie udostępnia bez weryfikacji, że jesteś człowiekiem, więc analizujemy tylko
   pierwszą stronę.
-- Analiza 10 opinii trwa ok. 20 sekund. Pierwsza po dłuższej przerwie jest wolniejsza, bo Ollama musi wczytać model.
+- Analiza 10 opinii trwa ok. pół minuty. Pierwsza po dłuższej przerwie jest wolniejsza, bo Ollama musi wczytać model.
 
 **Spróbuj:** wklej przykładowy link spod pola (Apple iPhone 15 256GB) i kliknij **Analizuj**. Zobaczysz 10 z 50
 opinii ze średnią 4,6★. Raport wskaże jako problem zgodność z opisem i faktury – jeden klient dostał telefon,
@@ -60,25 +60,25 @@ ocena klienta: poniżej 3★ to opinia negatywna, 3★ neutralna, powyżej 3★ 
 
 | Metoda | Trafność | F1 makro | Czas na 1000 opinii |
 |---|---|---|---|
-| Słownik wydźwięku | 49,8% | 0,37 | 2 s |
+| Słownik wydźwięku | 49,8% | 0,37 | 1 s |
 | Klasyczne ML (TF-IDF) | 73,2% | 0,63 | poniżej 1 s |
 | Gotowy model (Hugging Face) | 67,4% | 0,59 | 9 s |
-| LLM | 72,0% | 0,64 | 16 min |
+| LLM | 72,2% | 0,65 | 18 min |
 
 **Jak czytać wyniki:**
 
-- Po polsku najlepiej wypada LLM (F1 makro 0,64), ale TF-IDF uczony na polskich opiniach jest prawie tak samo dobry
+- Po polsku najlepiej wypada LLM (F1 makro 0,65), ale TF-IDF uczony na polskich opiniach jest prawie tak samo dobry
   (0,63) i liczy 1000 opinii w niecałą sekundę.
 - Gotowy model z Hugging Face jest wielojęzyczny i nie był uczony na polskich opiniach, dlatego wypada słabiej.
 - LLM najlepiej wyłapuje opinie negatywne (F1 0,84) i jako jedyny podaje tematy i cytaty.
 - Wykres „Które opinie sprawiają kłopot” pokazuje F1 osobno dla każdej klasy. Najtrudniejsze są opinie
   neutralne (3★): klient pisze o zaletach i wadach naraz.
-- Tabela „Ile kosztowałby LLM przez API” przelicza zużyte tokeny na ceny trzech tanich modeli w chmurze:
-  od 0,36 do 1,47 zł za 1000 opinii.
+- Zdanie pod tabelą przelicza tokeny zużyte przez LLM na ceny trzech tanich modeli w chmurze: od 0,36 do 1,47 zł
+  za 1000 opinii (linki prowadzą do cenników).
 - Wykres „Tematy: słownik czy LLM?” pokazuje, że LLM znajduje więcej wzmianek o każdym temacie niż słownik,
-  np. o jakości 672 zamiast 328 na 1006 opinii.
+  np. o jakości 667 zamiast 328 na 1006 opinii.
 
-Na dole ekranu jest wyjaśnienie, dlaczego główną miarą jest F1 makro, a nie trafność.
+Dlaczego główną miarą jest F1 makro, a nie trafność, wyjaśnia ikonka „?” przy nagłówku kolumny.
 
 ## 4. Opinie
 
@@ -94,7 +94,8 @@ Przełącznik **Pokaż** filtruje tabelę:
 - **Metody się nie zgadzają**: 52 opinie, w których co najmniej jedna metoda ma inne zdanie,
 - **Słownik się myli, LLM nie**: 29 opinii.
 
-**Spróbuj:** kliknij drugi wiersz („Bardzo dobra jakość wykonania…”, 5★, ekspres De'Longhi). Słownik uznał
+**Spróbuj:** wybierz widok **Słownik się myli, LLM nie** i kliknij czwarty wiersz („Bardzo dobra jakość
+wykonania…”, 5★, ekspres De'Longhi). Słownik uznał
 opinię za negatywną, a w tematach zapisał krytykę jakości. Powód: słowo „dobra” sprowadził do rzeczownika „dobro”,
 którego nie ma w słowniku, a „wykonania” do „wykonać”, które ma w słowniku ocenę −2. LLM rozumie sens zdania.
 
