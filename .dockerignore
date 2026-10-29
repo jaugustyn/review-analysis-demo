@@ -2,6 +2,5 @@
 .venv
 data
 models
-results
 docs
 **/__pycache__

@@ -13,16 +13,16 @@ import numpy as np
 import pandas as pd
 
 from src.config import (
-    API_PRICES_CHECKED, DEMO_RESULTS, EVAL_RESULTS, METRICS_PATH, PRODUCTS_RESULTS, RESULTS_DIR, SEED, USD_PLN_SOURCE,
+    API_PRICES_CHECKED, DEMO_RESULTS, EVAL_RESULTS, METRICS_PATH, PRODUCTS_RESULTS, RESULTS_DIR, SEED, TOPIC_SAMPLE,
+    USD_PLN_SOURCE,
 )
 from src.formatting import (
     INK, METHOD_LABELS, NEGATIVE, NEUTRAL, POSITIVE, SENTIMENT_LABELS, SOURCE_LABELS, TEAL, fmt_int, fmt_num,
     fmt_pct, fmt_pln, fmt_seconds,
 )
 from src.llm import api_costs
-from src.topics import TOPIC_LABELS
+from src.topics import TOPIC_LABELS, manual_check
 
-TOPIC_SAMPLE = RESULTS_DIR / "topic_review_sample.csv"
 SAMPLE_SIZE = 50
 
 
@@ -98,15 +98,13 @@ def topic_check(evaluated: pd.DataFrame) -> str:
             "poprawne_slownik": "",
             "poprawne_llm": "",
         }).to_csv(TOPIC_SAMPLE, index=False, encoding="utf-8-sig")
-    checked = pd.read_csv(TOPIC_SAMPLE, encoding="utf-8-sig", dtype=str).fillna("")
-    answers = {source: checked[f"poprawne_{source}"].str.strip().str.lower() for source in ("slownik", "llm")}
-    if not all(answers[source].isin(["tak", "nie"]).all() for source in answers):
+    check = manual_check()
+    if check is None:
         return (f"Ręczna ocena jeszcze niewypełniona: w `{TOPIC_SAMPLE.name}` dla każdej z {SAMPLE_SIZE} opinii wpisz "
                 "„tak” albo „nie” w kolumnach `poprawne_slownik` i `poprawne_llm` (czy tematy i ich wydźwięk "
                 "zgadzają się z treścią opinii), potem uruchom `report.py` ponownie.")
-    return (f"Ręczna ocena {SAMPLE_SIZE} losowych opinii: tematy poprawne w "
-            f"{fmt_pct((answers['slownik'] == 'tak').mean())} opinii dla słownika i "
-            f"{fmt_pct((answers['llm'] == 'tak').mean())} dla LLM.")
+    return (f"Ręczna ocena {check['reviews']} losowych opinii: tematy poprawne w {fmt_pct(check['keywords'])} "
+            f"opinii dla słownika i {fmt_pct(check['llm'])} dla LLM.")
 
 
 def main() -> None:
@@ -153,7 +151,8 @@ Wygenerowane przez `report.py` ({date.today():%d.%m.%Y}) z wyników `analyze.py`
   negatywne {fmt_pct(shares.get('negative', 0), 1)}, neutralne {fmt_pct(shares.get('neutral', 0), 1)}.
 - Prawda: ocena klienta – poniżej 3★ negatywna, 3★ neutralna, powyżej 3★ pozytywna.
 - Produkty demo: {len(products)} produktów z Ceneo.pl, po pierwszej stronie opinii (zwykle 10, w kolejności
-  wybranej przez Ceneo; kolejnych stron Ceneo nie udostępnia bez weryfikacji, że jest się człowiekiem).
+  wybranej przez Ceneo; kolejne strony Ceneo otwiera tylko w przeglądarce, po automatycznym sprawdzeniu,
+  czy to nie bot).
   Razem {fmt_int(len(demo))} opinii, pozytywne {fmt_pct((demo['sentiment'] == 'positive').mean())}.
 
 ## Metody
@@ -172,9 +171,8 @@ Wygenerowane przez `report.py` ({date.today():%d.%m.%Y}) z wyników `analyze.py`
 
 {md_table(comparison)}
 
-Czas zmierzony na {metrics['gpu']}; LLM: {metrics['llm_workers']} zapytania naraz. Wszystkie metody działały
-lokalnie, więc ich koszt to 0 zł (poza prądem i sprzętem). Metoda, która zawsze mówi „pozytywna”, miałaby
-trafność {fmt_pct(shares.get('positive', 0))} i F1 makro {fmt_num(2 * shares.get('positive', 0) / (1 + shares.get('positive', 0)) / 3)} –
+Czas zmierzony na {metrics['gpu']}. Wszystkie metody działały lokalnie, więc ich koszt to 0 zł
+(poza prądem i sprzętem). Metoda, która zawsze mówi „pozytywna”, miałaby trafność {fmt_pct(shares.get('positive', 0))} i F1 makro {fmt_num(2 * shares.get('positive', 0) / (1 + shares.get('positive', 0)) / 3)} –
 dlatego główną miarą jest F1 makro.
 
 ## Ile kosztowałby LLM przez API

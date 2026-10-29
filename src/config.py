@@ -26,6 +26,7 @@ METRICS_PATH = PRECOMPUTED_DIR / "metrics.json"
 MODELS_DIR = ROOT / "models"  # TF-IDF model for the live analysis (not in git)
 TFIDF_PATH = MODELS_DIR / "tfidf.joblib"
 RESULTS_DIR = ROOT / "results"
+TOPIC_SAMPLE = RESULTS_DIR / "topic_review_sample.csv"  # sample for the manual check of topics, filled in by hand
 
 SEED = 42
 # Ceneo product IDs (https://www.ceneo.pl/<ID>). The first page of reviews of each is fetched by prepare_data.py.

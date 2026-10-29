@@ -20,7 +20,7 @@ with st.form("live"):
     link = st.text_input(
         "Link do produktu na Ceneo", placeholder=LIVE_EXAMPLE_LINK,
         help="Bierzemy opinie z pierwszej strony produktu na Ceneo (zwykle 10, w kolejności wybranej przez Ceneo). "
-             "Kolejnych stron Ceneo nie udostępnia bez weryfikacji, że jesteś człowiekiem.",
+             "Kolejne strony Ceneo otwiera tylko w przeglądarce, po automatycznym sprawdzeniu, czy to nie bot.",
     )
     submitted = st.form_submit_button("Analizuj", type="primary")
 st.caption(f"Przykład: `{LIVE_EXAMPLE_LINK}`")

@@ -13,7 +13,7 @@ from src.formatting import (
     fmt_pct, fmt_pln, fmt_seconds,
 )
 from src.llm import api_costs
-from src.topics import TOPIC_LABELS
+from src.topics import TOPIC_LABELS, manual_check
 
 metrics = load_metrics()
 evaluated = load_eval()
@@ -74,6 +74,11 @@ st.altair_chart((chart + labels).properties(height=320), width="stretch")
 st.caption("Najtrudniejsze są opinie neutralne (3★): klient pisze o zaletach i wadach naraz.")
 
 st.subheader("Tematy: słownik czy LLM?")
+check = manual_check()
+if check:
+    st.markdown(f"Tematy są poprawne w **{fmt_pct(check['keywords'])}** opinii dla słownika i w "
+                f"**{fmt_pct(check['llm'])}** dla LLM (ręczna ocena {check['reviews']} losowych opinii).",
+                help="Opinia liczy się jako poprawna, gdy tematy i ich wydźwięk zgadzają się z jej treścią.")
 counts = pd.DataFrame([
     {"Temat": TOPIC_LABELS[item["topic"]], "Źródło": SOURCE_LABELS[source]}
     for source in SOURCE_LABELS for raw in evaluated[f"topics_{source}"] for item in json.loads(raw)

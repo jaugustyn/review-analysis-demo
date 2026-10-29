@@ -13,8 +13,8 @@ z nich.
   ze słownika albo z LLM, oraz raport dla menedżera.
 - **Analiza na żywo** – wklejasz link do dowolnego produktu na Ceneo, a aplikacja pobiera jego opinie i liczy
   to samo (tylko przy lokalnym uruchomieniu).
-- **Porównanie metod** – trafność, F1 i czas analizy 1000 opinii dla czterech metod oraz szacunek kosztu
-  LLM w płatnych API.
+- **Porównanie metod** – trafność, F1 i czas analizy 1000 opinii dla czterech metod, szacunek kosztu
+  LLM w płatnych API oraz ręczna ocena tematów ze słownika i z LLM.
 - **Opinie** – opinie produktów demo z werdyktem każdej metody; widać, gdzie która metoda się myli.
 
 Jak korzystać z aplikacji, krok po kroku: [docs/tutorial.md](docs/tutorial.md).
@@ -25,7 +25,7 @@ Podsumowanie wyników (tabele i wykresy): [results/summary.md](results/summary.m
 
 - **Opinie o produktach: [Ceneo.pl](https://www.ceneo.pl).** Aplikacja pobiera tylko stronę produktu (jedno
   zapytanie) i bierze z niej pierwszą stronę opinii – zwykle 10, w kolejności wybranej przez Ceneo. Kolejne
-  strony Ceneo udostępnia dopiero po weryfikacji, że jest się człowiekiem, i tego nie obchodzimy.
+  strony Ceneo otwiera tylko w przeglądarce, po automatycznym sprawdzeniu, czy to nie bot – tego nie obchodzimy.
   Zapisujemy tylko ocenę, treść i datę opinii, bez nazw autorów.
 - **Porównanie metod i nauka TF-IDF: [Allegro Reviews](https://huggingface.co/datasets/allegro/klej-allegro-reviews)**
   z benchmarku [KLEJ](https://klejbenchmark.com) (licencja CC BY-SA 4.0): ok. 11,6 tys. opinii z Allegro.pl

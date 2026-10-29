@@ -1,6 +1,6 @@
 # Wyniki – Głos Klienta
 
-Wygenerowane przez `report.py` (28.10.2026) z wyników `analyze.py` z 2026-10-28.
+Wygenerowane przez `report.py` (29.10.2026) z wyników `analyze.py` z 2026-10-28.
 
 ## Dane
 
@@ -10,7 +10,8 @@ Wygenerowane przez `report.py` (28.10.2026) z wyników `analyze.py` z 2026-10-28
   negatywne 32,6%, neutralne 14,3%.
 - Prawda: ocena klienta – poniżej 3★ negatywna, 3★ neutralna, powyżej 3★ pozytywna.
 - Produkty demo: 10 produktów z Ceneo.pl, po pierwszej stronie opinii (zwykle 10, w kolejności
-  wybranej przez Ceneo; kolejnych stron Ceneo nie udostępnia bez weryfikacji, że jest się człowiekiem).
+  wybranej przez Ceneo; kolejne strony Ceneo otwiera tylko w przeglądarce, po automatycznym sprawdzeniu,
+  czy to nie bot).
   Razem 100 opinii, pozytywne 94%.
 
 ## Metody
@@ -34,9 +35,8 @@ Wygenerowane przez `report.py` (28.10.2026) z wyników `analyze.py` z 2026-10-28
 | Gotowy model (Hugging Face) | 67,4% | 0,59 | 0,74 | 0,29 | 0,74 | 9 s |
 | LLM | 72,2% | 0,65 | 0,84 | 0,31 | 0,79 | 18 min |
 
-Czas zmierzony na NVIDIA GeForce RTX 5070; LLM: 4 zapytania naraz. Wszystkie metody działały
-lokalnie, więc ich koszt to 0 zł (poza prądem i sprzętem). Metoda, która zawsze mówi „pozytywna”, miałaby
-trafność 53% i F1 makro 0,23 –
+Czas zmierzony na NVIDIA GeForce RTX 5070. Wszystkie metody działały lokalnie, więc ich koszt to 0 zł
+(poza prądem i sprzętem). Metoda, która zawsze mówi „pozytywna”, miałaby trafność 53% i F1 makro 0,23 –
 dlatego główną miarą jest F1 makro.
 
 ## Ile kosztowałby LLM przez API
@@ -65,7 +65,7 @@ Wzmianki o tematach w 1 006 opiniach:
 
 Cytaty LLM dosłownie obecne w opinii: 94% (pozostałe aplikacja pomija).
 
-Ręczna ocena jeszcze niewypełniona: w `topic_review_sample.csv` dla każdej z 50 opinii wpisz „tak” albo „nie” w kolumnach `poprawne_slownik` i `poprawne_llm` (czy tematy i ich wydźwięk zgadzają się z treścią opinii), potem uruchom `report.py` ponownie.
+Ręczna ocena 50 losowych opinii: tematy poprawne w 30% opinii dla słownika i 70% dla LLM.
 
 ## Przykłady, w których słownik się myli, a LLM nie
 

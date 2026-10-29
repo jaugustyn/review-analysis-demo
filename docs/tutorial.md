@@ -29,7 +29,7 @@ czyli zwykle 10 opinii w kolejności wybranej przez Ceneo.
    Rozwiń „Jakość”: klienci piszą np. „gwinty na sruby zle spasowane”. Narzekają też na obsługę klienta (2 opinie).
 2. Przełącz „Źródło tematów” na **Słownik słów kluczowych**. Słownik znajduje tu tylko 3 wzmianki o tematach
    (LLM – 10): pomija zdania, w których nie zna żadnego słowa nacechowanego emocjonalnie.
-3. Wybierz odkurzacz Jigoo C200 (same opinie 5★). W „Co poprawić” jest tylko jedna uwaga, a klienci chwalą
+3. Wybierz odkurzacz Jigoo C200 (same wysokie oceny: 9 opinii 5★ i jedna 4,5★). W „Co poprawić” jest tylko jedna uwaga, a klienci chwalą
    głównie cenę.
 
 ## 2. Analiza na żywo
@@ -40,8 +40,8 @@ Tu wklejasz link do dowolnego produktu na Ceneo. Aplikacja pobiera stronę produ
 dla opinii z jej pierwszej strony: cztery metody, tematy i raport. Wynik wygląda tak samo jak na ekranie Produkt.
 
 - Działa tylko przy lokalnym uruchomieniu, z kartą graficzną i Ollamą. W Dockerze ekran wyjaśnia, czego brakuje.
-- Kolejnych stron opinii Ceneo nie udostępnia bez weryfikacji, że jesteś człowiekiem, więc analizujemy tylko
-  pierwszą stronę.
+- Kolejne strony opinii Ceneo otwiera tylko w przeglądarce, po automatycznym sprawdzeniu, czy to nie bot,
+  więc analizujemy tylko pierwszą stronę.
 - Analiza 10 opinii trwa ok. pół minuty. Pierwsza po dłuższej przerwie jest wolniejsza, bo Ollama musi wczytać model.
 
 **Spróbuj:** wklej przykładowy link spod pola (Apple iPhone 15 256GB) i kliknij **Analizuj**. Zobaczysz 10 z 50
@@ -76,7 +76,8 @@ ocena klienta: poniżej 3★ to opinia negatywna, 3★ neutralna, powyżej 3★ 
 - Zdanie pod tabelą przelicza tokeny zużyte przez LLM na ceny trzech tanich modeli w chmurze: od 0,36 do 1,47 zł
   za 1000 opinii (linki prowadzą do cenników).
 - Wykres „Tematy: słownik czy LLM?” pokazuje, że LLM znajduje więcej wzmianek o każdym temacie niż słownik,
-  np. o jakości 667 zamiast 328 na 1006 opinii.
+  np. o jakości 667 zamiast 328 na 1006 opinii. Zdanie nad wykresem podaje wynik ręcznej oceny 50 losowych opinii:
+  tematy są poprawne w 30% opinii dla słownika i w 70% dla LLM.
 
 Dlaczego główną miarą jest F1 makro, a nie trafność, wyjaśnia ikonka „?” przy nagłówku kolumny.
 

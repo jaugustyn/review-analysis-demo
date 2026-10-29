@@ -9,6 +9,8 @@ import re
 
 import pandas as pd
 
+from src.config import TOPIC_SAMPLE
+
 TOPIC_LABELS = {
     "quality": "Jakość", "description": "Zgodność z opisem", "price": "Cena", "delivery": "Dostawa",
     "service": "Obsługa klienta",
@@ -78,3 +80,16 @@ def topic_summary(reviews: pd.DataFrame, source: str) -> pd.DataFrame:
             quotes = mentions.loc[(mentions["topic"] == topic) & (mentions["polarity"] == polarity), "quote"]
             summary.append({"topic": topic, "polarity": polarity, "reviews": len(quotes), "quotes": quotes.tolist()})
     return pd.DataFrame(summary)
+
+
+def manual_check() -> dict | None:
+    """Manual check of topics in TOPIC_SAMPLE: the number of reviews and, for "keywords" and "llm", the share
+    of reviews with correct topics. None until every review has "tak" or "nie" for both sources."""
+    if not TOPIC_SAMPLE.exists():
+        return None
+    checked = pd.read_csv(TOPIC_SAMPLE, encoding="utf-8-sig", dtype=str).fillna("")
+    answers = {source: checked[column].str.strip().str.lower()
+               for source, column in (("keywords", "poprawne_slownik"), ("llm", "poprawne_llm"))}
+    if not all(a.isin(["tak", "nie"]).all() for a in answers.values()):
+        return None
+    return {"reviews": len(checked), **{source: (a == "tak").mean() for source, a in answers.items()}}

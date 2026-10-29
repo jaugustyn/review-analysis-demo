@@ -1,7 +1,8 @@
 """Reviews of one product from its page on Ceneo.pl.
 
 Only the product page is fetched, with one request. It shows the first page of reviews (about 10, in the order
-Ceneo chooses). Further pages are loaded by the page's scripts behind a bot check, which we do not get around.
+Ceneo chooses). Further pages (/<ID>/opinie-2 and so on) open only in a browser, after a script checks that it is
+not a bot; we do not get around that.
 Reviewer names are not kept. httpx and BeautifulSoup are imported inside fetch_product: the app itself (and Docker)
 uses only product_link and does not install them.
 """
