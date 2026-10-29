@@ -6,7 +6,7 @@ import altair as alt
 import pandas as pd
 import streamlit as st
 
-from src.app_data import load_eval, load_metrics
+from src.app_data import load_eval, load_metrics, readable
 from src.config import API_PRICES_CHECKED
 from src.formatting import (
     GRAY, INK, METHOD_LABELS, NEGATIVE, NEUTRAL, POSITIVE, SENTIMENT_LABELS, SOURCE_LABELS, TEAL, fmt_int, fmt_num,
@@ -69,8 +69,8 @@ chart = alt.Chart(per_class).mark_bar(height=12, cornerRadius=3).encode(
                     scale=alt.Scale(domain=classes, range=[NEGATIVE, NEUTRAL, POSITIVE])),
     tooltip=["Metoda:N", "Klasa:N", alt.Tooltip("F1:Q", format=".2f")],
 )
-labels = chart.mark_text(align="left", dx=4, fontSize=11).encode(text="Etykieta:N", color=alt.value(INK))
-st.altair_chart((chart + labels).properties(height=320), width="stretch")
+labels = chart.mark_text(align="left", dx=4, fontSize=13).encode(text="Etykieta:N", color=alt.value(INK))
+st.altair_chart(readable((chart + labels).properties(height=320)), width="stretch")
 st.caption("Najtrudniejsze są opinie neutralne (3★): klient pisze o zaletach i wadach naraz.")
 
 st.subheader("Tematy: słownik czy LLM?")
@@ -92,6 +92,6 @@ chart = alt.Chart(counts).mark_bar(height=14, cornerRadius=3).encode(
                     scale=alt.Scale(domain=sources, range=[GRAY, TEAL])),
     tooltip=["Temat:N", "Źródło:N", "Wzmianki:Q"],
 )
-st.altair_chart(chart.properties(height=320), width="stretch")
+st.altair_chart(readable(chart.properties(height=320)), width="stretch")
 st.caption(f"Słownik widzi temat tylko wtedy, gdy padnie słowo z listy; LLM rozumie sens. "
            f"{fmt_pct(metrics['llm_quotes_verbatim'])} cytatów LLM jest dosłownie w opinii, pozostałe aplikacja pomija.")

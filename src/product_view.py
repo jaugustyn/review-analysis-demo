@@ -5,6 +5,7 @@ import altair as alt
 import pandas as pd
 import streamlit as st
 
+from src.app_data import readable
 from src.ceneo import product_link
 from src.formatting import INK, NEGATIVE, POSITIVE, SOURCE_LABELS, fmt_int, fmt_num, fmt_pct, md_escape, shorten
 from src.topics import TOPIC_LABELS, topic_summary
@@ -57,11 +58,11 @@ def show_product(product_id: str, product: dict, reviews: pd.DataFrame, llm_mode
                         scale=alt.Scale(domain=["Chwalą", "Narzekają"], range=[POSITIVE, NEGATIVE])),
         tooltip=["Temat:N", "Kierunek:N", "Opinie:Q"],
     )
-    right = bars.transform_filter("datum.Wartość > 0").mark_text(align="left", dx=4).encode(
+    right = bars.transform_filter("datum.Wartość > 0").mark_text(align="left", dx=4, fontSize=13).encode(
         text="Opinie:Q", color=alt.value(INK))
-    left = bars.transform_filter("datum.Wartość < 0").mark_text(align="right", dx=-4).encode(
+    left = bars.transform_filter("datum.Wartość < 0").mark_text(align="right", dx=-4, fontSize=13).encode(
         text="Opinie:Q", color=alt.value(INK))
-    st.altair_chart((bars + right + left).properties(height=250), width="stretch")
+    st.altair_chart(readable((bars + right + left).properties(height=250)), width="stretch")
     st.caption("Ile opinii chwali lub krytykuje dany temat. Jedna opinia może dotyczyć kilku tematów.")
 
     for topic, label in TOPIC_LABELS.items():
